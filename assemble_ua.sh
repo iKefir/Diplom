@@ -1,0 +1,15 @@
+partspath="user_algorithm/c/create_your_ua"
+resultname="assembled.c"
+configname="config.txt"
+fitness_change_type=${1}
+fitness_change_frequency=${2}
+user_algorithm_name=${3}
+
+> ${partspath}/${resultname} &&
+if [ ${user_algorithm_name} == ab ]; then echo "#define AB\n" >> ${partspath}/${resultname}; fi &&
+cat ${partspath}/params.c >> ${partspath}/${resultname} &&
+cat ${partspath}/fitness_change_type/${fitness_change_type}.c >> ${partspath}/${resultname} &&
+echo "static const int FITNESS_CHANGE_FREQUENCY = "${fitness_change_frequency}";\n" >> ${partspath}/${resultname} &&
+cat ${partspath}/dynamic_fitness_common.c >> ${partspath}/${resultname} &&
+cat ${partspath}/mutation.c >> ${partspath}/${resultname} &&
+cat ${partspath}/user_algorithm/algo.c >> ${partspath}/${resultname}
