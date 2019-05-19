@@ -4,6 +4,7 @@ dimensions=${4}
 restarts=${5}
 newpath=${6}
 f_id=${7}
+bud_multiplier=${8}
 filename=${newpath_subfolder}
 
 echo ""
@@ -13,7 +14,7 @@ echo ${newpath_subfolder}
 ./assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp config/assembled.c ${resultpath}/configuration.ini &&
 # create user algorithm file
-./assemble_ua.sh ${1} ${2} ${3} ${restarts} &&
+./assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
 cp user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
