@@ -10,11 +10,32 @@ void get_default_target_function(int *target_function, const size_t dimension) {
   }
 }
 
-size_t get_next_budget(size_t i) {
-    if (FITNESS_CHANGE_FREQUENCY) {
-      return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+size_t get_next_budget(size_t i, IOHprofiler_random_state_t *random_generator) {
+    if (FITNESS_CHANGE_FREQUENCY == 0) {
+      return 100000009;
     }
-    return 50001;
+    // Here FITNESS_CHANGE_FREQUENCY is actually amount of evaluations during which fitness is unchanged
+    // return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+
+    // Here FITNESS_CHANGE_FREQUENCY is probability and we change fitness with probability 1 / FITNESS_CHANGE_FREQUENCY
+    double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
+    size_t count = 2;
+    while (IOHprofiler_random_uniform(random_generator) > prob) {
+      ++count;
+    }
+    // double next_rand = IOHprofiler_random_uniform(random_generator);
+    // FILE * fp;
+    // fp = fopen("very_simple_debug.txt","a");
+
+    // double to_add = floor(log(next_rand) / log(1.0 - prob));
+    // if (to_add > 1000) {
+    //   fprintf (fp, "OLOLO %.100f\n",next_rand);
+    //   fprintf (fp, "TO ADD %f\n",to_add);
+    // }
+
+    // fclose (fp);
+
+    return i + count;
 }
 
 int change_fitness_function(int *permutation,

@@ -1,5 +1,3 @@
-#define AB
-
 /**
  * The maximal budget for evaluations done by an optimization algorithm equals dimension * BUDGET_MULTIPLIER.
  * Increase the budget multiplier value gradually to see how it affects the runtime.
@@ -27,7 +25,7 @@ enum Change_type {
   PERMUTATION
 };
 static const enum Change_type CHANGE_TYPE = BIT_INVERT;
-static const int FITNESS_CHANGE_FREQUENCY = 84;
+static const int FITNESS_CHANGE_FREQUENCY = 54;
 
 void get_default_permutation(int *permutation, const size_t dimension) {
   for (size_t i = 0; i < dimension; ++i) {
@@ -41,11 +39,32 @@ void get_default_target_function(int *target_function, const size_t dimension) {
   }
 }
 
-size_t get_next_budget(size_t i) {
-    if (FITNESS_CHANGE_FREQUENCY) {
-      return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+size_t get_next_budget(size_t i, IOHprofiler_random_state_t *random_generator) {
+    if (FITNESS_CHANGE_FREQUENCY == 0) {
+      return 100000009;
     }
-    return 50001;
+    // Here FITNESS_CHANGE_FREQUENCY is actually amount of evaluations during which fitness is unchanged
+    // return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+
+    // Here FITNESS_CHANGE_FREQUENCY is probability and we change fitness with probability 1 / FITNESS_CHANGE_FREQUENCY
+    double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
+    size_t count = 2;
+    while (IOHprofiler_random_uniform(random_generator) > prob) {
+      ++count;
+    }
+    // double next_rand = IOHprofiler_random_uniform(random_generator);
+    // FILE * fp;
+    // fp = fopen("very_simple_debug.txt","a");
+
+    // double to_add = floor(log(next_rand) / log(1.0 - prob));
+    // if (to_add > 1000) {
+    //   fprintf (fp, "OLOLO %.100f\n",next_rand);
+    //   fprintf (fp, "TO ADD %f\n",to_add);
+    // }
+
+    // fclose (fp);
+
+    return i + count;
 }
 
 int change_fitness_function(int *permutation,
@@ -204,7 +223,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   int *best = IOHprofiler_allocate_int_vector(dimension);
   double parent_value, best_value = 0.0;
   double *y = IOHprofiler_allocate_vector(number_of_objectives);
-  size_t number_of_parameters = 2;
+  size_t number_of_parameters = 3;
   double *p = IOHprofiler_allocate_vector(number_of_parameters);
   size_t i, j, l;
   double mutation_rate = 1/(double)dimension;
@@ -216,11 +235,11 @@ void User_Algorithm(evaluate_function_t evaluate,
   l = 0;
 
   int should_change_fitness = 0;
-  int next_budget_to_change_fitness = get_next_budget(0);
+  int next_budget_to_change_fitness = get_next_budget(0, random_generator);
   int times_got_improvement = 0;
 
   generatingIndividual(parent,dimension,random_generator);
-  p[0] = best_value; p[1] = mutation_rate;
+  p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
   // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
   set_parameters(number_of_parameters,p);
   evaluate(parent,y);
@@ -232,7 +251,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   for (i = 1; i < max_budget;) {
     if (next_budget_to_change_fitness <= i) {
       should_change_fitness = 1;
-      next_budget_to_change_fitness = get_next_budget(i);
+      next_budget_to_change_fitness = get_next_budget(i, random_generator);
     }
     if (should_change_fitness) {
       is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, random_generator);
@@ -262,7 +281,7 @@ void User_Algorithm(evaluate_function_t evaluate,
       /* Call the evaluate function to evaluate x on the current problem (this is where all the IOHprofiler logging
        * is performed) */
       // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
-      p[0] = best_value; p[1] = mutation_rate;
+      p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
       set_parameters(number_of_parameters,p);
 
       apply_fitness_function_change_to_individual(offspring, offspring_to_send, permutation, target_function, dimension);

@@ -14,7 +14,7 @@ echo "observer_name = PBO" >> ${partspath}/${resultname} &&
 echo "result_folder = "${experiment_name} >> ${partspath}/${resultname} &&
 echo "algorithm_name = "${experiment_name} >> ${partspath}/${resultname} &&
 echo "algorithm_info = "${experiment_name} >> ${partspath}/${resultname} &&
-echo "parameters_name = best_value,mutation_rate" >> ${partspath}/${resultname} &&
+echo "parameters_name = best_value,mutation_rate,next_budget_to_change_fitness" >> ${partspath}/${resultname} &&
 
 # mutation_rate,FITNESS_CHANGE_FREQUENCY,lambda
 

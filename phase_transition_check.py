@@ -39,7 +39,7 @@ def process_filename(path, file, filename, max_value):
                         reached.append(j)
                     else:
                         not_reached.append(j)
-                to_write = re.search(r'fit_\w{2}_\d+_\w{2}', filename).group(0)
+                to_write = re.search(r'fit_\w{2,4}_\d+_\w{2,4}', filename).group(0)
                 # print to_write.group(0), filename
                 # exit(1)
                 if len(not_reached) == 0:
@@ -53,6 +53,7 @@ def process_filename(path, file, filename, max_value):
                         app.write(to_write + '\t' + str(100.0*float(len(reached))/float(l_list)) + '%\n')
 
 def run_zip(path, filename, max_value):
+    print "RUNZIP"
     max_value = max_value
 
     with closing(zipfile.ZipFile(filename)) as zfile:

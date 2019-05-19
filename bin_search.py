@@ -7,13 +7,13 @@ import phase_transition_check
 
 resultpath='../IOHProfiler/IOHExperimenter/code-experiments/build/c'
 newpath='../IOHProfiler/Results/IOHExperimenter'
-ua='ab'
+ua='stat'
 fitness='bi'
 
 already_seen = {}
 
 def lower_bound(path):
-    ll = 1
+    ll = 0
     hh = 10000
     not_reached_size = 0
     reached_size = 0
@@ -36,7 +36,7 @@ def lower_bound(path):
             else:
                 hh = mid
             continue
-        subprocess.check_call(['./execute_one_experiment.sh ' + fitness + ' ' + str(mid) + ' ' + ua], shell=True)
+        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua])
         try:
             with open(path+'/not_reached.txt') as rr:
                 new_not_reached_size = len(list(rr))
@@ -62,7 +62,7 @@ def lower_bound(path):
     return hh
 
 def upper_bound(path):
-    ll = 1
+    ll = 0
     hh = 10000
     not_reached_size = 0
     reached_size = 0
@@ -85,7 +85,7 @@ def upper_bound(path):
             else:
                 ll = mid
             continue
-        subprocess.check_call(['./execute_one_experiment.sh ' + fitness + ' ' + str(mid) + ' ' + ua], shell=True)
+        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua])
         try:
             with open(path+'/reached.txt') as rr:
                 new_reached_size = len(list(rr))
@@ -112,13 +112,14 @@ def upper_bound(path):
 
 def eval_range(lb, ub):
     for i in range(lb, ub):
-        zip_path = newpath+'/all_zips/001-fit_bi_'+str(i)+'_ab.zip'
+        zip_path = newpath+'/all_zips/001-fit_' + fitness + '_' + str(i) + '_' + ua + '.zip'
+        print 'CHECKING', zip_path
         if os.path.exists(zip_path):
             phase_transition_check.run_zip(newpath, zip_path, 100)
             # phase_transition_check.main(newpath, 'fit_bi_'+str(i)+'_ab/fit_bi_'+str(i)+'_ab', 100)
         else:
-            print 'NOT EXISTS', newpath+'/all_zips/fit_bi_'+str(i)+'_ab.zip'
-            subprocess.check_call(['./execute_one_experiment.sh ' + fitness + ' ' + str(i) + ' ' + ua], shell=True)
+            print 'NOT EXISTS', zip_path
+            subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(i), ua])
 
 if __name__ == '__main__':
     lb = lower_bound(newpath)

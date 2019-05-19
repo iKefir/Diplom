@@ -29,7 +29,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   int *best = IOHprofiler_allocate_int_vector(dimension);
   double parent_value, best_value = 0.0;
   double *y = IOHprofiler_allocate_vector(number_of_objectives);
-  size_t number_of_parameters = 2;
+  size_t number_of_parameters = 3;
   double *p = IOHprofiler_allocate_vector(number_of_parameters);
   size_t i, j, l;
   double mutation_rate = 1/(double)dimension;
@@ -41,11 +41,11 @@ void User_Algorithm(evaluate_function_t evaluate,
   l = 0;
 
   int should_change_fitness = 0;
-  int next_budget_to_change_fitness = get_next_budget(0);
+  int next_budget_to_change_fitness = get_next_budget(0, random_generator);
   int times_got_improvement = 0;
 
   generatingIndividual(parent,dimension,random_generator);
-  p[0] = best_value; p[1] = mutation_rate;
+  p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
   // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
   set_parameters(number_of_parameters,p);
   evaluate(parent,y);
@@ -57,7 +57,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   for (i = 1; i < max_budget;) {
     if (next_budget_to_change_fitness <= i) {
       should_change_fitness = 1;
-      next_budget_to_change_fitness = get_next_budget(i);
+      next_budget_to_change_fitness = get_next_budget(i, random_generator);
     }
     if (should_change_fitness) {
       is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, random_generator);
@@ -87,7 +87,7 @@ void User_Algorithm(evaluate_function_t evaluate,
       /* Call the evaluate function to evaluate x on the current problem (this is where all the IOHprofiler logging
        * is performed) */
       // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
-      p[0] = best_value; p[1] = mutation_rate;
+      p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
       set_parameters(number_of_parameters,p);
 
       apply_fitness_function_change_to_individual(offspring, offspring_to_send, permutation, target_function, dimension);
