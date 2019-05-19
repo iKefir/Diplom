@@ -3,16 +3,21 @@
 
 import subprocess
 import os.path
+import argparse
+
 import phase_transition_check
 
-resultpath='../IOHProfiler/IOHExperimenter/code-experiments/build/c'
-newpath='../IOHProfiler/Results/IOHExperimenter'
-ua='stat'
-fitness='bi'
+def parse_command_line():
+    parser = argparse.ArgumentParser(description='Document analyzer.')
+    parser.add_argument('f_id', nargs=1, help='Id of function to launch.')
+    parser.add_argument('restarts', nargs=1, help='Amount of experiment launches.')
+    parser.add_argument('dimension', nargs=1, help='Dimensionality of search space.')
+    parser.add_argument('path', nargs=1, help='Path of document to analyze.')
+    parser.add_argument('fitness', nargs=1, help='Kind of dynamicity of fitness function.')
+    parser.add_argument('ua', nargs=1, help='Kind of user algorithm.')
+    return parser.parse_args()
 
-already_seen = {}
-
-def lower_bound(path):
+def lower_bound(f_id, restarts, dimension, path, fitness, ua, already_seen):
     ll = 0
     hh = 10000
     not_reached_size = 0
@@ -36,7 +41,7 @@ def lower_bound(path):
             else:
                 hh = mid
             continue
-        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua])
+        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua, dimension, restarts, path, f_id])
         try:
             with open(path+'/not_reached.txt') as rr:
                 new_not_reached_size = len(list(rr))
@@ -61,7 +66,7 @@ def lower_bound(path):
     print 'Found lower bound:\t' + str(hh)
     return hh
 
-def upper_bound(path):
+def upper_bound(f_id, restarts, dimension, path, fitness, ua, already_seen):
     ll = 0
     hh = 10000
     not_reached_size = 0
@@ -85,7 +90,7 @@ def upper_bound(path):
             else:
                 ll = mid
             continue
-        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua])
+        subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(mid), ua, dimension, restarts, path, f_id])
         try:
             with open(path+'/reached.txt') as rr:
                 new_reached_size = len(list(rr))
@@ -110,19 +115,35 @@ def upper_bound(path):
     print 'Found upper bound:\t' + str(hh)
     return hh
 
-def eval_range(lb, ub):
+def eval_range(f_id, restarts, dimension, path, fitness, ua, lb, ub):
     for i in range(lb, ub):
-        zip_path = newpath+'/all_zips/001-fit_' + fitness + '_' + str(i) + '_' + ua + '.zip'
+        zip_path = path+'/all_zips/001-fit_' + fitness + '_' + str(i) + '_' + ua + '.zip'
         print 'CHECKING', zip_path
         if os.path.exists(zip_path):
-            phase_transition_check.run_zip(newpath, zip_path, 100)
-            # phase_transition_check.main(newpath, 'fit_bi_'+str(i)+'_ab/fit_bi_'+str(i)+'_ab', 100)
+            phase_transition_check.run_zip(path, zip_path, 100)
+            # phase_transition_check.main(path, 'fit_bi_'+str(i)+'_ab/fit_bi_'+str(i)+'_ab', 100)
         else:
             print 'NOT EXISTS', zip_path
-            subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(i), ua])
+            subprocess.check_call(['sh', 'execute_one_experiment.sh', fitness, str(i), ua, dimension, restarts, path, f_id])
+
+def main(f_id, restarts, dimension, path, fitness, ua):
+    already_seen = {}
+    f_id = str(f_id)
+    restarts = str(restarts)
+    dimension = str(dimension)
+    if f_id == '1':
+        path = path + '/OneMax'
+    elif f_id == '2':
+        path = path + '/LeadingOnes'
+    else:
+        path = path + '/' + f_id
+    path = path + '/' + dimension
+    lb = lower_bound(f_id, restarts, dimension, path, fitness, ua, already_seen)
+    ub = upper_bound(f_id, restarts, dimension, path, fitness, ua, already_seen)
+    eval_range(f_id, restarts, dimension, path, fitness, ua, lb, ub)
+    print 'Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub)
+
 
 if __name__ == '__main__':
-    lb = lower_bound(newpath)
-    ub = upper_bound(newpath)
-    eval_range(lb, ub)
-    print 'Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub)
+    args = parse_command_line()
+    main(args.f_id[0], args.restarts[0], args.dimension[0], args.path[0], args.fitness[0], args.ua[0])

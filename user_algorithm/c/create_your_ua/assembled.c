@@ -1,13 +1,10 @@
+static const size_t INDEPENDENT_RESTARTS =  100 ;
+
 /**
  * The maximal budget for evaluations done by an optimization algorithm equals dimension * BUDGET_MULTIPLIER.
  * Increase the budget multiplier value gradually to see how it affects the runtime.
  */
 static const size_t BUDGET_MULTIPLIER = 1000;
-
-/**
- * The maximal number of independent restarts allowed for an algorithm that restarts itself.
- */
-static const size_t INDEPENDENT_RESTARTS = 100;
 
 /**
  * The random seed. Change it if needed.
@@ -25,7 +22,7 @@ enum Change_type {
   PERMUTATION
 };
 static const enum Change_type CHANGE_TYPE = BIT_INVERT;
-static const int FITNESS_CHANGE_FREQUENCY = 54;
+static const int FITNESS_CHANGE_FREQUENCY = 81;
 
 void get_default_permutation(int *permutation, const size_t dimension) {
   for (size_t i = 0; i < dimension; ++i) {

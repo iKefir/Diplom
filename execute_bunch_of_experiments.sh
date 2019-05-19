@@ -28,10 +28,12 @@
 #   done
 # done
 
+newpath="../IOHProfiler/Results/IOHExperimenter"
+
 for ua in stat ab; do # stat ab
   for fitness in bi; do # bi pm
-    for frequency in 1 5 10 50 100 500 1000; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
-      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua}; then
+    for frequency in 100; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
+      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} 100 100 ${newpath} 2; then
         exit 1
       fi
     done

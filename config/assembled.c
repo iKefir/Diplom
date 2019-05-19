@@ -5,9 +5,9 @@ instances_id = 1
 dimensions = 100
 [observer]
 observer_name = PBO
-result_folder = fit_bi_54_stat
-algorithm_name = fit_bi_54_stat
-algorithm_info = fit_bi_54_stat
+result_folder = fit_bi_81_stat
+algorithm_name = fit_bi_81_stat
+algorithm_info = fit_bi_81_stat
 parameters_name = best_value,mutation_rate,next_budget_to_change_fitness
 [triggers]
 number_target_triggers = 3

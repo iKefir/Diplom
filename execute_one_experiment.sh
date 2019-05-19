@@ -1,17 +1,19 @@
 resultpath="../IOHProfiler/IOHExperimenter/code-experiments/build/c"
-newpath="../IOHProfiler/Results/IOHExperimenter"
-newpath_subfolder=fit_${1}_${2}
-if [ ! -z "$3" ]; then newpath_subfolder+=_${3}; fi
+newpath_subfolder=fit_${1}_${2}_${3}
+dimensions=${4}
+restarts=${5}
+newpath=${6}
+f_id=${7}
 filename=${newpath_subfolder}
 
 echo ""
 echo ${newpath_subfolder}
 
 # create config.ini
-./assemble_config.sh ${filename} &&
+./assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp config/assembled.c ${resultpath}/configuration.ini &&
 # create user algorithm file
-./assemble_ua.sh ${1} ${2} ${3} &&
+./assemble_ua.sh ${1} ${2} ${3} ${restarts} &&
 cp user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&

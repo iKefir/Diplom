@@ -5,9 +5,9 @@ experiment_name=${1}
 > ${partspath}/${resultname}
 echo "[suite]" >> ${partspath}/${resultname} &&
 echo "suite_name = PBO" >> ${partspath}/${resultname} &&
-echo "functions_id = 2" >> ${partspath}/${resultname} &&
+echo "functions_id = "${3} >> ${partspath}/${resultname} &&
 echo "instances_id = 1" >> ${partspath}/${resultname} &&
-echo "dimensions = 100" >> ${partspath}/${resultname} &&
+echo "dimensions = "${2} >> ${partspath}/${resultname} &&
 
 echo "[observer]" >> ${partspath}/${resultname} &&
 echo "observer_name = PBO" >> ${partspath}/${resultname} &&
