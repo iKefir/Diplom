@@ -11,9 +11,9 @@ import bin_search
 newpath='../IOHProfiler/Results/IOHExperimenter'
 f_id = [2, 1]
 ua = ['stat'] # 'stat', 'ab'
-fitness = ['bi'] # 'stat', 'bi', 'pm'
+fitness = ['stat'] # 'stat', 'bi', 'pm'
 restarts = [100]
-dimensions = [100]
+# dimensions = [10]
 dimensions = [10,   20,   30,   40,   50,   60,   70,   80,   90,
               100,  200,  300,  400,  500,  600,  700,  800,  900]
               # 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
