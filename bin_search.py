@@ -117,6 +117,8 @@ def upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, al
     return hh
 
 def eval_range(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, lb, ub):
+    if ub - lb > 50:
+        return
     for i in range(lb, ub):
         zip_path = path+'/all_zips/001-fit_' + fitness + '_' + str(i) + '_' + ua + '.zip'
         print 'CHECKING', zip_path

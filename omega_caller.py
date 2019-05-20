@@ -12,7 +12,7 @@ newpath='../IOHProfiler/Results/IOHExperimenter'
 f_id = [2, 1]
 ua = ['stat'] # 'stat', 'ab'
 fitness = ['stat'] # 'stat', 'bi', 'pm'
-restarts = [100]
+restarts = [1]
 dimensions = [10,   20,   30,   40,   50,   60,   70,   80,   90,
               100,  200,  300,  400,  500,  600,  700,  800,  900]
               # 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
@@ -24,4 +24,4 @@ if __name__ == '__main__':
             for d in dimensions:
                 for f in fitness:
                     for alg in ua:
-                        bin_search.main(fun_id, r, (max_budget / d) + 1, d, newpath, f, alg)
+                        bin_search.main(fun_id, r, 1000, d, newpath, f, alg)
