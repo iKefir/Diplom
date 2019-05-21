@@ -35,8 +35,6 @@ void User_Algorithm(evaluate_function_t evaluate,
   double mutation_rate = 1/(double)dimension;
   double min_mutation_rate = 1 / ((double)dimension * (double)dimension);
 
-  mutation_rate = min_mutation_rate;
-
   int is_fitness_changed;
   l = 0;
 
