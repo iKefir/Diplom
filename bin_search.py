@@ -153,9 +153,10 @@ def main(f_id, restarts, bud_multiplier, dimension, path, fitness, ua):
     except:
         pass
 
-    with open(path_for_saving_results+'/run_results.csv', 'a+') as rr:
-        if len(list(rr)) == 0:
+    if not os.path.exists(path_for_saving_results+'/run_results.csv'):
+        with open(path_for_saving_results+'/run_results.csv', 'a+') as rr:
             rr.write('frequency fit-' + fitness + '-' + ua + '-lower-bound fit-' + fitness + '-' + ua +'-upper-bound\n')
+    with open(path_for_saving_results+'/run_results.csv', 'a+') as rr:
         rr.write(dimension + ' ' + str(lb) + ' ' + str(ub) + '\n')
 
     eval_range(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, lb, ub)
