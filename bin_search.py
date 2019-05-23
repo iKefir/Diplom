@@ -117,7 +117,7 @@ def upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, al
     return hh
 
 def eval_range(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, lb, ub):
-    if ub - lb > 50:
+    if ub - lb > 1:
         return
     for i in range(lb, ub):
         zip_path = path+'/all_zips/001-fit_' + fitness + '_' + str(i) + '_' + ua + '.zip'
@@ -144,7 +144,13 @@ def main(f_id, restarts, bud_multiplier, dimension, path, fitness, ua):
     path = path + '/' + dimension
     lb = lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen)
     ub = upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen)
+    try:
+        with open(path+'/mixed_reached.txt', 'a+') as rr:
+            rr.write('Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub) + '\n')
+    except:
+        pass
     eval_range(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, lb, ub)
+
     print 'Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub)
 
 

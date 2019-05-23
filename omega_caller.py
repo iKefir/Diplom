@@ -13,9 +13,8 @@ f_id = [2, 1]
 ua = ['stat'] # 'stat', 'ab'
 fitness = ['bi'] # 'stat', 'bi', 'pm'
 restarts = [100]
-dimensions =[      10,   20,   30,   40,   50,   60,   70,   80,   90,
-             100,  110,  120,  130,  140,  150,  160,  170,  180, 190]
-              # 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+dimensions = [ 10,  20,  30,  40,  50,  60,  70,  80,  90, 100,
+              110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
 
 if __name__ == '__main__':
     max_budget = 100000;
@@ -24,4 +23,4 @@ if __name__ == '__main__':
             for d in dimensions:
                 for f in fitness:
                     for alg in ua:
-                        bin_search.main(fun_id, r, 1000, d, newpath, f, alg)
+                        bin_search.main(fun_id, r, 2*d, d, newpath, f, alg)
