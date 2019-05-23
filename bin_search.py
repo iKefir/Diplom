@@ -20,7 +20,7 @@ def parse_command_line():
 
 def lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen):
     ll = 0
-    hh = 10000
+    hh = 1000
     not_reached_size = 0
     reached_size = 0
     try:
@@ -69,7 +69,7 @@ def lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, al
 
 def upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen):
     ll = 0
-    hh = 10000
+    hh = 1000
     not_reached_size = 0
     reached_size = 0
     try:
@@ -141,14 +141,23 @@ def main(f_id, restarts, bud_multiplier, dimension, path, fitness, ua):
         path = path + '/LeadingOnes'
     else:
         path = path + '/' + f_id
+    path_for_saving_results = str(path)
     path = path + '/' + dimension
+
     lb = lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen)
     ub = upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen)
+
     try:
         with open(path+'/mixed_reached.txt', 'a+') as rr:
             rr.write('Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub) + '\n')
     except:
         pass
+
+    with open(path_for_saving_results+'/run_results.csv', 'a+') as rr:
+        if len(list(rr)) == 0:
+            rr.write('frequency fit-' + fitness + '-' + ua + '-lower-bound fit-' + fitness + '-' + ua +'-upper-bound\n')
+        rr.write(dimension + ' ' + str(lb) + ' ' + str(ub) + '\n')
+
     eval_range(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, lb, ub)
 
     print 'Found lower bound:\t' + str(lb) + '\tupper bound:\t' + str(ub)

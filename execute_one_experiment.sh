@@ -39,7 +39,7 @@ fi &&
 cp -r ${resultpath}/${filename}${suffix} ${newpath}/${newpath_subfolder}/ &&
 rm -rf ${resultpath}/${filename}${suffix} &&
 
-# there should check for phase transition
+# check for phase transition
 ./phase_transition_check.py ${newpath} ${newpath_subfolder}/${filename}${suffix} ${dimensions} &&
 
 # zip result
