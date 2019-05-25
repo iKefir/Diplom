@@ -1,3 +1,6 @@
+
+#include <stdio.h>
+
 /**
  * An user defined algorithm.
  *
@@ -46,7 +49,8 @@ void User_Algorithm(evaluate_function_t evaluate,
   p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
   // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
   set_parameters(number_of_parameters,p);
-  evaluate(parent,y);
+  apply_fitness_function_change_to_individual(parent, offspring_to_send, permutation, target_function, dimension);
+  evaluate(offspring_to_send,y);
 
   CopyIndividual(parent,best,dimension);
   parent_value = y[0];
@@ -101,6 +105,17 @@ void User_Algorithm(evaluate_function_t evaluate,
           CopyIndividual(offspring,best,dimension);
         }
       }
+
+      // if (best_value == 3.0) {
+        // FILE * fp;
+        // fp = fopen("/Users/danil.shkarupin/Study/wonderlog.txt","a");
+        // fprintf (fp, "%d: %f  ", i, best_value);
+        // for (int iii = 0; iii < dimension; ++iii) {
+        //   fprintf (fp, "T %d B %d M %d   ", target_function[iii], offspring[iii], offspring_to_send[iii]);
+        // }
+        // fprintf(fp, "\n");
+        // fclose (fp);
+      // }
 
       ++i;
       if(i == max_budget){

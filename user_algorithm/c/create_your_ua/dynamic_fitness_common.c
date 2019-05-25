@@ -19,7 +19,7 @@ size_t get_next_budget(size_t i, IOHprofiler_random_state_t *random_generator) {
       return 100000009;
     }
     // Here FITNESS_CHANGE_FREQUENCY is actually amount of evaluations during which fitness is unchanged
-    // return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+    return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
 
     // Here FITNESS_CHANGE_FREQUENCY is probability and we change fitness with probability 1 / FITNESS_CHANGE_FREQUENCY
     // double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
@@ -28,11 +28,11 @@ size_t get_next_budget(size_t i, IOHprofiler_random_state_t *random_generator) {
     //   ++count;
     // }
     // return i + count;
-    double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
-    size_t count = 2;
-    double next_rand = IOHprofiler_random_uniform(random_generator);
-    double to_add = floor(log(next_rand) / log(1.0 - prob));
-    return i + count + to_add;
+    // double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
+    // size_t count = 2;
+    // double next_rand = IOHprofiler_random_uniform(random_generator);
+    // double to_add = floor(log(next_rand) / log(1.0 - prob));
+    // return i + count + to_add;
 }
 
 int change_fitness_function(int *permutation,
@@ -54,6 +54,10 @@ int change_fitness_function(int *permutation,
   if (c_t == PERMUTATION) {
     int rand_ind = dimension;
     int tmp;
+    // FILE * fp;
+    // fp = fopen ("/Users/danil.shkarupin/Study/permlog.txt","a");
+    // fprintf (fp, "Random called\n");
+    // fclose (fp);
     for (int i = dimension - 1; i > -1; --i) {
         while (rand_ind >= dimension) {
           rand_ind = (int)(IOHprofiler_random_uniform(random_generator) * dimension); // if generates from 0 to 100 - have to deal with 100

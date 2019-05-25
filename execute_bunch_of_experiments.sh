@@ -18,17 +18,17 @@
 # ./execute_one_experiment.sh bi 1000 stat &&
 # ./execute_one_experiment.sh bi 1000 ab &&
 
-# for ua in stat ab; do
-#   for fitness in stat; do
-#     for frequency in 0; do
-#       if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua}; then
-#         exit 1
-#       fi
-#     done
-#   done
-# done
-
 newpath="../IOHProfiler/Results/IOHExperimenter"
+
+for ua in stat ab; do
+  for fitness in stat; do
+    for frequency in 0; do
+      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} 100 1000 ${newpath} 2 200; then
+        exit 1
+      fi
+    done
+  done
+done
 
 for ua in stat ab; do # stat ab
   for fitness in bi pm; do # bi pm
