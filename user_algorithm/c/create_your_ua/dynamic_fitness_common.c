@@ -4,9 +4,13 @@ void get_default_permutation(int *permutation, const size_t dimension) {
   }
 }
 
-void get_default_target_function(int *target_function, const size_t dimension) {
+void get_default_target_function(int *target_function, const size_t dimension, IOHprofiler_random_state_t *random_generator) {
   for (size_t i = 0; i < dimension; ++i) {
-    target_function[i] = 1;
+    if (IOHprofiler_random_uniform(random_generator) > 0.5) {
+      target_function[i] = 1;
+    } else {
+      target_function[i] = 0;
+    }
   }
 }
 

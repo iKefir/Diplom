@@ -25,7 +25,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   int *permutation = IOHprofiler_allocate_int_vector(dimension);
   get_default_permutation(permutation, dimension);
   int *target_function = IOHprofiler_allocate_int_vector(dimension);
-  get_default_target_function(target_function, dimension);
+  get_default_target_function(target_function, dimension, random_generator);
   int *best = IOHprofiler_allocate_int_vector(dimension);
   double parent_value, best_value = 0.0;
   double *y = IOHprofiler_allocate_vector(number_of_objectives);

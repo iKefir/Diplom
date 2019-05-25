@@ -1,4 +1,4 @@
 set key autotitle columnhead
 set xlabel 'dimension'
 set ylabel 'frequency'
-plot 'runResults.csv' using 1:2 with linespoints, 'runResults.csv' using 1:3 with linespoints, 'runResults.csv' using 1:4 with linespoints, 'runResults.csv' using 1:5 with linespoints
+plot '../IOHProfiler/Results/experiment_1.2/LeadingOnes/STAT/run_results.csv' using 1:2 with linespoints, '../IOHProfiler/Results/experiment_1.2/LeadingOnes/STAT/run_results.csv' using 1:3 with linespoints, '../IOHProfiler/Results/experiment_1.2/LeadingOnes/AB/run_results.csv' using 1:2 with linespoints, '../IOHProfiler/Results/experiment_1.2/LeadingOnes/AB/run_results.csv' using 1:3 with linespoints
