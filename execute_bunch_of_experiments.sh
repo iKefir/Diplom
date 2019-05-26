@@ -20,10 +20,15 @@
 
 newpath="../IOHProfiler/Results/IOHExperimenter"
 
+dimension=100
+restarts=1000
+func_id=2
+budget_multiplier=200
+
 for ua in stat ab; do
   for fitness in stat; do
     for frequency in 0; do
-      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} 100 1000 ${newpath} 2 200; then
+      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath} ${func_id} ${budget_multiplier}; then
         exit 1
       fi
     done
@@ -33,7 +38,7 @@ done
 for ua in stat ab; do # stat ab
   for fitness in bi pm; do # bi pm
     for frequency in 1 5 10 50 100 500 1000 5000; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
-      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} 100 1000 ${newpath} 2 200; then
+      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath} ${func_id} ${budget_multiplier}; then
         exit 1
       fi
     done
