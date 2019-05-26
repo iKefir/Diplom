@@ -20,7 +20,7 @@ def parse_command_line():
 
 def lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen):
     ll = 0
-    hh = 1000
+    hh = 100000
     not_reached_size = 0
     reached_size = 0
     try:
@@ -69,7 +69,7 @@ def lower_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, al
 
 def upper_bound(f_id, restarts, bud_multiplier, dimension, path, fitness, ua, already_seen):
     ll = 0
-    hh = 1000
+    hh = 100000
     not_reached_size = 0
     reached_size = 0
     try:
@@ -135,12 +135,14 @@ def main(f_id, restarts, bud_multiplier, dimension, path, fitness, ua):
     restarts = str(restarts)
     bud_multiplier = str(bud_multiplier)
     dimension = str(dimension)
+    path = path + '/' + fitness.upper()
     if f_id == '1':
         path = path + '/OneMax'
     elif f_id == '2':
         path = path + '/LeadingOnes'
     else:
         path = path + '/' + f_id
+    path = path + '/' + ua.upper()
     path_for_saving_results = str(path)
     path = path + '/' + dimension
 

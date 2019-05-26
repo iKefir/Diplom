@@ -9,7 +9,7 @@ import phase_transition_check
 import bin_search
 
 newpath='../IOHProfiler/Results/IOHExperimenter'
-f_id = [2, 1]
+f_id = [2]
 ua = ['stat'] # 'stat', 'ab'
 fitness = ['bi'] # 'stat', 'bi', 'pm'
 restarts = [100]
@@ -23,4 +23,4 @@ if __name__ == '__main__':
             for d in dimensions:
                 for f in fitness:
                     for alg in ua:
-                        bin_search.main(fun_id, r, 2*d, d, newpath, f, alg)
+                        bin_search.main(fun_id, r, 1000, d, newpath, f, alg)

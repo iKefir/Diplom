@@ -21,9 +21,9 @@
 newpath="../IOHProfiler/Results/IOHExperimenter"
 
 dimension=100
-restarts=1000
-func_id=2
-budget_multiplier=200
+restarts=100
+func_id=1
+budget_multiplier=1000
 
 for ua in stat ab; do
   for fitness in stat; do
