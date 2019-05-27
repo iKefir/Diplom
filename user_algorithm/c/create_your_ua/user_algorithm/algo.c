@@ -20,6 +20,7 @@ void User_Algorithm(evaluate_function_t evaluate,
                       const int *lower_bounds,
                       const int *upper_bounds,
                       const size_t max_budget,
+                      IOHprofiler_random_state_t *target_random_generator,
                       IOHprofiler_random_state_t *random_generator) {
 
   int *parent = IOHprofiler_allocate_int_vector(dimension);
@@ -28,7 +29,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   int *permutation = IOHprofiler_allocate_int_vector(dimension);
   get_default_permutation(permutation, dimension);
   int *target_function = IOHprofiler_allocate_int_vector(dimension);
-  get_default_target_function(target_function, dimension, random_generator);
+  get_default_target_function(target_function, dimension, target_random_generator);
   int *best = IOHprofiler_allocate_int_vector(dimension);
   double parent_value, best_value = 0.0;
   double *y = IOHprofiler_allocate_vector(number_of_objectives);
@@ -42,7 +43,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   l = 0;
 
   int should_change_fitness = 0;
-  int next_budget_to_change_fitness = get_next_budget(0, random_generator);
+  int next_budget_to_change_fitness = get_next_budget(0, target_random_generator);
   int times_got_improvement = 0;
 
   generatingIndividual(parent,dimension,random_generator);
@@ -59,10 +60,10 @@ void User_Algorithm(evaluate_function_t evaluate,
   for (i = 1; i < max_budget;) {
     if (next_budget_to_change_fitness <= i) {
       should_change_fitness = 1;
-      next_budget_to_change_fitness = get_next_budget(i, random_generator);
+      next_budget_to_change_fitness = get_next_budget(i, target_random_generator);
     }
     if (should_change_fitness) {
-      is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, random_generator);
+      is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, target_random_generator);
 
       if (is_fitness_changed) {
         best_value = 0.0;
@@ -111,7 +112,7 @@ void User_Algorithm(evaluate_function_t evaluate,
         // fp = fopen("/Users/danil.shkarupin/Study/wonderlog.txt","a");
         // fprintf (fp, "%d: %f  ", i, best_value);
         // for (int iii = 0; iii < dimension; ++iii) {
-        //   fprintf (fp, "T %d B %d M %d   ", target_function[iii], offspring[iii], offspring_to_send[iii]);
+        //   fprintf (fp, "T %d P %d Ind %d IndToSend %d   ", target_function[iii], permutation[iii], offspring[iii], offspring_to_send[iii]);
         // }
         // fprintf(fp, "\n");
         // fclose (fp);

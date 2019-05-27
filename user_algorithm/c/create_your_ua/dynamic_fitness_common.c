@@ -80,6 +80,7 @@ void apply_fitness_function_change_to_individual(int *individual,
   //   individual_to_send[i] = target_function[permutation[i]];
   // }
   for (i = 0; i < dimension; ++i) {
+    // individual_to_send[i] = (individual[i] + (1 - target_function[i])) % 2;
     individual_to_send[i] = (individual[permutation[i]] + (1 - target_function[permutation[i]])) % 2;
   }
 }
