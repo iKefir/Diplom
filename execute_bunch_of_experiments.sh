@@ -22,9 +22,10 @@ newpath="../IOHProfiler/Results/IOHExperimenter"
 
 dimension=100
 restarts=100
-func_id=2
+# func_id=4
 budget_multiplier=500
 
+for func_id in 4 5; do
 for ua in stat ab; do
   for fitness in stat; do
     for frequency in 0; do
@@ -43,6 +44,7 @@ for ua in stat ab; do # stat ab
       fi
     done
   done
+done
 done
 
 say DONE &&
