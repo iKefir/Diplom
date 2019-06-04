@@ -70,6 +70,8 @@ void User_Algorithm(evaluate_function_t evaluate,
       }
 
       if (is_fitness_changed) {
+        p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
+        set_parameters(number_of_parameters,p);
         apply_fitness_function_change_to_individual(parent, offspring_to_send, permutation, target_function, dimension);
         evaluate(offspring_to_send, y);
         parent_value = y[0];
@@ -122,9 +124,9 @@ void User_Algorithm(evaluate_function_t evaluate,
       if(i == max_budget){
         break;
       }
-      if (best_value == dimension) {
-        break;
-      }
+      // if (best_value == dimension) {
+      //   break;
+      // }
     }
 
     #ifdef AB
@@ -140,9 +142,9 @@ void User_Algorithm(evaluate_function_t evaluate,
     parent_value = best_value;
     CopyIndividual(best,parent,dimension);
 
-    if (best_value == dimension) {
-      break;
-    }
+    // if (best_value == dimension) {
+    //   break;
+    // }
   }
 
   IOHprofiler_free_memory(parent);

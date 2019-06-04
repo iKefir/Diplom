@@ -19,9 +19,9 @@ echo "parameters_name = best_value,mutation_rate,next_budget_to_change_fitness" 
 # mutation_rate,FITNESS_CHANGE_FREQUENCY,lambda
 
 echo "[triggers]" >> ${partspath}/${resultname} &&
-echo "number_target_triggers = 3" >> ${partspath}/${resultname} &&
+echo "number_target_triggers = 0" >> ${partspath}/${resultname} &&
 echo "base_evaluation_triggers = 1,2,5" >> ${partspath}/${resultname} &&
-echo "complete_triggers = false" >> ${partspath}/${resultname} &&
-echo "number_interval_triggers = 10" >> ${partspath}/${resultname} &&
+echo "complete_triggers = true" >> ${partspath}/${resultname} &&
+echo "number_interval_triggers = 0" >> ${partspath}/${resultname} &&
 
 echo "DONE"
