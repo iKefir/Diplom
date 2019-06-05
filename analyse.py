@@ -77,15 +77,25 @@ def analyse(path, filename, best_fitness):
         figure_path = os.path.join(os.path.dirname(path), 'graphs')
         if not os.path.exists(figure_path):
             os.mkdir(figure_path)
-
+        if not os.path.exists(os.path.join(figure_path, 'best_fitness')):
+            os.mkdir(os.path.join(figure_path, 'best_fitness'))
+        if not os.path.exists(os.path.join(figure_path, 'changes')):
+            os.mkdir(os.path.join(figure_path, 'changes'))
         try:
-            results = [num / runs for num in results if num >= 0.0]
+            inds = []
+            new_results = []
+            for i, r in enumerate(results):
+                if (r >= 0.0):
+                    inds.append(i)
+                    new_results.append(r / runs)
+            # results = [num / runs for num in results if num >= 0.0]
+            results = new_results
             plt.figure()
-            plt.plot(results)
+            plt.plot(inds, results)
             plt.xlabel('evaluations')
             plt.ylabel('best f(x) since change')
             plt.savefig(bp_path, dpi=100)
-            plt.savefig(os.path.join(figure_path, os.path.basename(path)[:-4] + '_best_fitness.png'), dpi=100)
+            plt.savefig(os.path.join(figure_path, 'best_fitness', os.path.basename(path)[4:-4] + '.png'), dpi=100)
             zf.write(bp_path, os.path.basename(bp_path))
 
             changes = [change / 100.0 for change in changes]
@@ -94,7 +104,7 @@ def analyse(path, filename, best_fitness):
             plt.xlabel('number of period between changes')
             plt.ylabel('percent of successful runs')
             plt.savefig(cp_path, dpi=100)
-            plt.savefig(os.path.join(figure_path, os.path.basename(path)[:-4] + '_changes.png'), dpi=100)
+            plt.savefig(os.path.join(figure_path, 'changes', os.path.basename(path)[4:-4]), dpi=100)
             zf.write(cp_path, os.path.basename(cp_path))
 
             plt.close('all')
