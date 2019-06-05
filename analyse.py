@@ -75,7 +75,7 @@ def analyse(path, filename, best_fitness):
         bp_path = os.path.join(tmpdir, bp_filename)
         cp_path = os.path.join(tmpdir, cp_filename)
         try:
-            results = [num / runs for num in results if num != 0]
+            results = [num / runs for num in results if num != -1]
             plt.figure()
             plt.plot(results)
             plt.xlabel('evaluations')

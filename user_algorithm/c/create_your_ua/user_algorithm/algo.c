@@ -66,7 +66,7 @@ void User_Algorithm(evaluate_function_t evaluate,
       is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, target_random_generator);
 
       if (is_fitness_changed) {
-        best_value = 0.0;
+        best_value = -1.0;
       }
 
       if (is_fitness_changed) {
