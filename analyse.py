@@ -47,7 +47,7 @@ def analyse(path, filename, best_fitness):
                     else:
                         results.append(best_f)
 
-                    if best_f == 0.0:
+                    if best_f < 0.0:
                         ch_ind += 1
                         can_add_run = True
                         if len(changes) <= ch_ind:
@@ -74,13 +74,18 @@ def analyse(path, filename, best_fitness):
         # Ensure the file is read/write by the creator only
         bp_path = os.path.join(tmpdir, bp_filename)
         cp_path = os.path.join(tmpdir, cp_filename)
+        figure_path = os.path.join(os.path.dirname(path), 'graphs')
+        if not os.path.exists(figure_path):
+            os.mkdir(figure_path)
+
         try:
-            results = [num / runs for num in results if num != -1]
+            results = [num / runs for num in results if num >= 0.0]
             plt.figure()
             plt.plot(results)
             plt.xlabel('evaluations')
             plt.ylabel('best f(x) since change')
             plt.savefig(bp_path, dpi=100)
+            plt.savefig(os.path.join(figure_path, os.path.basename(path)[:-4] + '_best_fitness.png'), dpi=100)
             zf.write(bp_path, os.path.basename(bp_path))
 
             changes = [change / 100.0 for change in changes]
@@ -89,11 +94,13 @@ def analyse(path, filename, best_fitness):
             plt.xlabel('number of period between changes')
             plt.ylabel('percent of successful runs')
             plt.savefig(cp_path, dpi=100)
+            plt.savefig(os.path.join(figure_path, os.path.basename(path)[:-4] + '_changes.png'), dpi=100)
             zf.write(cp_path, os.path.basename(cp_path))
 
             plt.close('all')
         except IOError as e:
             print 'IOError'
+            print e
         else:
             os.remove(bp_path)
             os.remove(cp_path)
