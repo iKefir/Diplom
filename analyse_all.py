@@ -7,9 +7,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-p_directory='../IOHProfiler/Results/experiment_3.1/'
+p_directory='../../1Diplom/IOHProfiler/Results/experiment_3.1/'
 
-for func_id in ['1', '2']#, '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17']:
+for func_id, best_f in [('1', 100), ('2', 100)]:#, ('4', 50), ('5', 90), ('6', 34), ('7', 100), ('8', 51), ('9', 100), ('10', 100), ('11', 50), ('12', 90), ('13', 34), ('14', 100), ('15', 51), ('16', 100), ('17', 100)]:
     directory = p_directory + func_id
     ress = {}
 
@@ -18,7 +18,7 @@ for func_id in ['1', '2']#, '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'
     for i, fl in enumerate(fls):
         sys.stdout.write('\r\033[K\033[1F\033[K' + ('%.0f' % (float(i*100) / len(fls))) + '%\tAnalyzing:\t' + fl + '\n')
         sys.stdout.flush()
-        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, 100)
+        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f, True)
 
     common_pref='001-fit'
 
