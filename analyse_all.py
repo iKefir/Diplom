@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 p_directory='../IOHProfiler/Results/experiment_3.1/'
 
-for func_id in ['1', '2']:
+for func_id in ['1', '2']#, '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17']:
     directory = p_directory + func_id
     ress = {}
 
@@ -48,7 +48,7 @@ for func_id in ['1', '2']:
         func_id = os.path.basename(directory)
         plt.xlabel('evaluations (func_id: ' + func_id + ' run_params: '+ comm_name[8:] + ')')
         plt.ylabel('best f(x) since change')
-        plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'best_fitness', comm_name + '.png'), dpi=100)
+        plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'best_fitness', (comm_name[4:] + '.png')), dpi=100)
 
         stat_changes = ress[stat_name][2]
         ab_changes = ress[ab_name][2]
@@ -57,6 +57,6 @@ for func_id in ['1', '2']:
         plt.plot(ab_changes)
         plt.xlabel('number of period between changes (func_id: ' + func_id + ' run_params: '+ comm_name[8:] + ')')
         plt.ylabel('percent of successful runs')
-        plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'changes', comm_name + '.png'), dpi=100)
+        plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'changes', (comm_name[4:] + '.png')), dpi=100)
 
         plt.close('all')
