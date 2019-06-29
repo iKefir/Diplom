@@ -18,14 +18,14 @@
 # ./execute_one_experiment.sh bi 1000 stat &&
 # ./execute_one_experiment.sh bi 1000 ab &&
 
-newpath="../IOHProfiler/Results/IOHExperimenter"
+newpath="../IOHProfiler/Results/experiment_3.1"
 
 dimension=100
 restarts=100
 # func_id=4
 budget_multiplier=500
 
-for func_id in 1; do
+for func_id in 4; do
 for ua in stat ab; do
   for fitness in stat; do
     for frequency in 0; do
