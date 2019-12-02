@@ -12,6 +12,7 @@ import tempfile
 import subprocess
 import csv
 from contextlib import closing
+from io import TextIOWrapper
 
 
 def parse_command_line():
@@ -28,14 +29,14 @@ def read_csv(path):
     changes = []
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with zf.open('best_fitness.csv') as csv_file:
-            reader = csv.reader(csv_file, delimiter=',')
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
             for i, row in enumerate(reader):
                 if i == 0:
                     continue
                 inds.append(int(row[0]))
                 results.append(float(row[1]))
         with zf.open('changes.csv') as csv_file:
-            reader = csv.reader(csv_file, delimiter=',')
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
             for i, row in enumerate(reader):
                 if i == 0:
                     continue
@@ -68,8 +69,8 @@ def write_csv(path, inds, results, changes):
                     writer.writerow([row])
             zf.write(cp_path, os.path.basename(cp_path))
         except IOError as e:
-            print 'IOError'
-            print e
+            print('IOError')
+            print(e)
         else:
             os.remove(bp_path)
             os.remove(cp_path)
@@ -175,8 +176,8 @@ def write_pngs(path, inds, results, changes):
 
             plt.close('all')
         except IOError as e:
-            print 'IOError'
-            print e
+            print('IOError')
+            print(e)
         else:
             os.remove(bp_path)
             os.remove(cp_path)
