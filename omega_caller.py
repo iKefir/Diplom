@@ -8,7 +8,7 @@ import os.path
 import phase_transition_check
 import bin_search
 
-newpath='../IOHProfiler/Results/IOHExperimenter'
+newpath='../IOHProfiler/Results/Experimentation'
 f_id = [2]
 ua = ['stat'] # 'stat', 'ab'
 fitness = ['bi'] # 'stat', 'bi', 'pm'
@@ -17,7 +17,7 @@ dimensions = [ 10,  20,  30,  40,  50,  60,  70,  80,  90, 100,
               110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
 
 if __name__ == '__main__':
-    max_budget = 100000;
+    max_budget = 100000
     for fun_id in f_id:
         for r in restarts:
             for d in dimensions:

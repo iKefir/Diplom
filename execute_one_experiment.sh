@@ -1,4 +1,4 @@
-resultpath="../IOHProfiler/IOHExperimenter/code-experiments/build/c"
+resultpath="../IOHProfiler/Experimentation/code-experiments/build/c"
 newpath_subfolder=fit_${1}_${2}_${3}
 dimensions=${4}
 restarts=${5}
@@ -19,7 +19,7 @@ cp user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
 # run experiment
-python ../IOHProfiler/IOHExperimenter/do.py run-c &&
+python ../IOHProfiler/Experimentation/do.py run-c &&
 # create new folder for results
 mkdir -p ${newpath}/${newpath_subfolder} &&
 # choose name for result to not intersect with results of same experiment from the past

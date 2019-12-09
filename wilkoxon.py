@@ -68,8 +68,8 @@ def write_csv(path, inds, results, changes):
                     writer.writerow([row])
             zf.write(cp_path, os.path.basename(cp_path))
         except IOError as e:
-            print 'IOError'
-            print e
+            print('IOError')
+            print(e)
         else:
             os.remove(bp_path)
             os.remove(cp_path)
@@ -176,8 +176,8 @@ def write_pngs(path, inds, results, changes):
 
             plt.close('all')
         except IOError as e:
-            print 'IOError'
-            print e
+            print('IOError')
+            print(e)
         else:
             os.remove(bp_path)
             os.remove(cp_path)

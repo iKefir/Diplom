@@ -53,7 +53,7 @@ def process_filename(path, file, filename, max_value):
                         app.write(to_write + '\t' + str(100.0*float(len(reached))/float(l_list)) + '%\n')
 
 def run_zip(path, filename, max_value):
-    print "RUNZIP"
+    print('RUNZIP')
     max_value = max_value
 
     with closing(zipfile.ZipFile(filename)) as zfile:

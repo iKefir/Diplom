@@ -1,10 +1,8 @@
+#define AB
+
 static const size_t INDEPENDENT_RESTARTS =  100 ;
 
-/**
- * The maximal budget for evaluations done by an optimization algorithm equals dimension * BUDGET_MULTIPLIER.
- * Increase the budget multiplier value gradually to see how it affects the runtime.
- */
-static const size_t BUDGET_MULTIPLIER = 1000;
+static const size_t BUDGET_MULTIPLIER =  500 ;
 
 /**
  * The random seed. Change it if needed.
@@ -21,8 +19,8 @@ enum Change_type {
   BIT_INVERT,
   PERMUTATION
 };
-static const enum Change_type CHANGE_TYPE = BIT_INVERT;
-static const int FITNESS_CHANGE_FREQUENCY = 81;
+static const enum Change_type CHANGE_TYPE = PERMUTATION;
+static const int FITNESS_CHANGE_FREQUENCY = 5000;
 
 void get_default_permutation(int *permutation, const size_t dimension) {
   for (size_t i = 0; i < dimension; ++i) {
@@ -30,9 +28,13 @@ void get_default_permutation(int *permutation, const size_t dimension) {
   }
 }
 
-void get_default_target_function(int *target_function, const size_t dimension) {
+void get_default_target_function(int *target_function, const size_t dimension, IOHprofiler_random_state_t *random_generator) {
   for (size_t i = 0; i < dimension; ++i) {
-    target_function[i] = 1;
+    if (IOHprofiler_random_uniform(random_generator) > 0.5) {
+      target_function[i] = 1;
+    } else {
+      target_function[i] = 0;
+    }
   }
 }
 
@@ -41,27 +43,20 @@ size_t get_next_budget(size_t i, IOHprofiler_random_state_t *random_generator) {
       return 100000009;
     }
     // Here FITNESS_CHANGE_FREQUENCY is actually amount of evaluations during which fitness is unchanged
-    // return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
+    return ((i / FITNESS_CHANGE_FREQUENCY) + 1) * FITNESS_CHANGE_FREQUENCY;
 
     // Here FITNESS_CHANGE_FREQUENCY is probability and we change fitness with probability 1 / FITNESS_CHANGE_FREQUENCY
-    double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
-    size_t count = 2;
-    while (IOHprofiler_random_uniform(random_generator) > prob) {
-      ++count;
-    }
-    // double next_rand = IOHprofiler_random_uniform(random_generator);
-    // FILE * fp;
-    // fp = fopen("very_simple_debug.txt","a");
-
-    // double to_add = floor(log(next_rand) / log(1.0 - prob));
-    // if (to_add > 1000) {
-    //   fprintf (fp, "OLOLO %.100f\n",next_rand);
-    //   fprintf (fp, "TO ADD %f\n",to_add);
+    // double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
+    // size_t count = 2;
+    // while (IOHprofiler_random_uniform(random_generator) > prob) {
+    //   ++count;
     // }
-
-    // fclose (fp);
-
-    return i + count;
+    // return i + count;
+    // double prob = 1.0 / FITNESS_CHANGE_FREQUENCY;
+    // size_t count = 2;
+    // double next_rand = IOHprofiler_random_uniform(random_generator);
+    // double to_add = floor(log(next_rand) / log(1.0 - prob));
+    // return i + count + to_add;
 }
 
 int change_fitness_function(int *permutation,
@@ -83,6 +78,10 @@ int change_fitness_function(int *permutation,
   if (c_t == PERMUTATION) {
     int rand_ind = dimension;
     int tmp;
+    // FILE * fp;
+    // fp = fopen ("/Users/danil.shkarupin/Study/permlog.txt","a");
+    // fprintf (fp, "Random called\n");
+    // fclose (fp);
     for (int i = dimension - 1; i > -1; --i) {
         while (rand_ind >= dimension) {
           rand_ind = (int)(IOHprofiler_random_uniform(random_generator) * dimension); // if generates from 0 to 100 - have to deal with 100
@@ -101,11 +100,12 @@ void apply_fitness_function_change_to_individual(int *individual,
                                                  int *target_function,
                                                  const size_t dimension) {
   size_t i;
+  // for (i = 0; i < dimension; ++i) {
+  //   individual_to_send[i] = target_function[permutation[i]];
+  // }
   for (i = 0; i < dimension; ++i) {
-    individual_to_send[permutation[i]] = individual[i];
-  }
-  for (i = 0; i < dimension; ++i) {
-    individual_to_send[i] = (individual_to_send[i] + (1 - target_function[i])) % 2;
+    // individual_to_send[i] = (individual[i] + (1 - target_function[i])) % 2;
+    individual_to_send[i] = (individual[permutation[i]] + (1 - target_function[permutation[i]])) % 2;
   }
 }
 /**
@@ -189,6 +189,9 @@ size_t mutateIndividual(int * individual,
   IOHprofiler_free_memory(flip);
   return l;
 }
+
+#include <stdio.h>
+
 /**
  * An user defined algorithm.
  *
@@ -208,6 +211,7 @@ void User_Algorithm(evaluate_function_t evaluate,
                       const int *lower_bounds,
                       const int *upper_bounds,
                       const size_t max_budget,
+                      IOHprofiler_random_state_t *target_random_generator,
                       IOHprofiler_random_state_t *random_generator) {
 
   int *parent = IOHprofiler_allocate_int_vector(dimension);
@@ -216,7 +220,7 @@ void User_Algorithm(evaluate_function_t evaluate,
   int *permutation = IOHprofiler_allocate_int_vector(dimension);
   get_default_permutation(permutation, dimension);
   int *target_function = IOHprofiler_allocate_int_vector(dimension);
-  get_default_target_function(target_function, dimension);
+  get_default_target_function(target_function, dimension, target_random_generator);
   int *best = IOHprofiler_allocate_int_vector(dimension);
   double parent_value, best_value = 0.0;
   double *y = IOHprofiler_allocate_vector(number_of_objectives);
@@ -226,20 +230,19 @@ void User_Algorithm(evaluate_function_t evaluate,
   double mutation_rate = 1/(double)dimension;
   double min_mutation_rate = 1 / ((double)dimension * (double)dimension);
 
-  mutation_rate = min_mutation_rate;
-
   int is_fitness_changed;
   l = 0;
 
   int should_change_fitness = 0;
-  int next_budget_to_change_fitness = get_next_budget(0, random_generator);
+  int next_budget_to_change_fitness = get_next_budget(0, target_random_generator);
   int times_got_improvement = 0;
 
   generatingIndividual(parent,dimension,random_generator);
   p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
   // p[0] = mutation_rate; p[1] = (double)FITNESS_CHANGE_FREQUENCY; p[2] = (double)lambda;
   set_parameters(number_of_parameters,p);
-  evaluate(parent,y);
+  apply_fitness_function_change_to_individual(parent, offspring_to_send, permutation, target_function, dimension);
+  evaluate(offspring_to_send,y);
 
   CopyIndividual(parent,best,dimension);
   parent_value = y[0];
@@ -248,16 +251,18 @@ void User_Algorithm(evaluate_function_t evaluate,
   for (i = 1; i < max_budget;) {
     if (next_budget_to_change_fitness <= i) {
       should_change_fitness = 1;
-      next_budget_to_change_fitness = get_next_budget(i, random_generator);
+      next_budget_to_change_fitness = get_next_budget(i, target_random_generator);
     }
     if (should_change_fitness) {
-      is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, random_generator);
+      is_fitness_changed = change_fitness_function(permutation, target_function, dimension, CHANGE_TYPE, target_random_generator);
 
       if (is_fitness_changed) {
-        best_value = 0.0;
+        best_value = -1.0;
       }
 
       if (is_fitness_changed) {
+        p[0] = best_value; p[1] = mutation_rate; p[2] = (double)next_budget_to_change_fitness + 1.0;
+        set_parameters(number_of_parameters,p);
         apply_fitness_function_change_to_individual(parent, offspring_to_send, permutation, target_function, dimension);
         evaluate(offspring_to_send, y);
         parent_value = y[0];
@@ -295,13 +300,24 @@ void User_Algorithm(evaluate_function_t evaluate,
         }
       }
 
+      // if (best_value == 3.0) {
+        // FILE * fp;
+        // fp = fopen("/Users/danil.shkarupin/Study/wonderlog.txt","a");
+        // fprintf (fp, "%d: %f  ", i, best_value);
+        // for (int iii = 0; iii < dimension; ++iii) {
+        //   fprintf (fp, "T %d P %d Ind %d IndToSend %d   ", target_function[iii], permutation[iii], offspring[iii], offspring_to_send[iii]);
+        // }
+        // fprintf(fp, "\n");
+        // fclose (fp);
+      // }
+
       ++i;
       if(i == max_budget){
         break;
       }
-      if (best_value == dimension) {
-        break;
-      }
+      // if (best_value == dimension) {
+      //   break;
+      // }
     }
 
     #ifdef AB
@@ -317,9 +333,9 @@ void User_Algorithm(evaluate_function_t evaluate,
     parent_value = best_value;
     CopyIndividual(best,parent,dimension);
 
-    if (best_value == dimension) {
-      break;
-    }
+    // if (best_value == dimension) {
+    //   break;
+    // }
   }
 
   IOHprofiler_free_memory(parent);
