@@ -1,4 +1,8 @@
-resultpath="../IOHProfiler/Experimentation/code-experiments/build/c"
+# /usr/bin/bash
+
+DIR=$(dirname $0)
+profilerpath=${DIR}/IOHProfiler
+resultpath=${profilerpath}/Experimentation/code-experiments/build/c
 newpath_subfolder=fit_${1}_${2}_${3}
 dimensions=${4}
 restarts=${5}
@@ -8,18 +12,18 @@ bud_multiplier=${8}
 filename=${newpath_subfolder}
 
 echo ""
-echo ${newpath_subfolder}
+echo START ${newpath_subfolder}
 
 # create config.ini
-./assemble_config.sh ${filename} ${dimensions} ${f_id} &&
-cp config/assembled.c ${resultpath}/configuration.ini &&
+${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
+cp ${DIR}/config/assembled.c ${resultpath}/configuration.ini &&
 # create user algorithm file
-./assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
-cp user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
+${DIR}/assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
+cp ${DIR}/user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
 # run experiment
-python ../IOHProfiler/Experimentation/do.py run-c &&
+python ${profilerpath}/Experimentation/do.py run-c > /dev/null &&
 # create new folder for results
 mkdir -p ${newpath}/${newpath_subfolder} &&
 # choose name for result to not intersect with results of same experiment from the past
@@ -40,7 +44,7 @@ cp -r ${resultpath}/${filename}${suffix} ${newpath}/${newpath_subfolder}/ &&
 rm -rf ${resultpath}/${filename}${suffix} &&
 
 # check for phase transition
-./phase_transition_check.py ${newpath} ${newpath_subfolder}/${filename}${suffix} ${dimensions} &&
+# ${DIR}/phase_transition_check.py ${newpath} ${newpath_subfolder}/${filename}${suffix} ${dimensions} &&
 
 # zip result
 pushd ${newpath}/${newpath_subfolder} &&
@@ -64,4 +68,4 @@ cp ${zipped_path} ${newpath}/all_zips/${new_prefix}${filename}.zip &&
 # keep your folders clean
 rm -rf ${newpath}/${newpath_subfolder} &&
 
-echo DONE FILE
+echo DONE ${newpath_subfolder}

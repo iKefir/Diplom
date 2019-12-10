@@ -2,7 +2,7 @@
 
 for graph_type in best_fitness changes; do
 
-p='../IOHProfiler/Results/experiment_3.1'
+p='1_experiment/Results/experiment_3.1'
 
 s_p='all_zips/graphs/'${graph_type}
 

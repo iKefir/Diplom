@@ -5,9 +5,9 @@ instances_id = 1
 dimensions = 100
 [observer]
 observer_name = PBO
-result_folder = fit_pm_5000_ab
-algorithm_name = fit_pm_5000_ab
-algorithm_info = fit_pm_5000_ab
+result_folder = fit_pm_500_ab
+algorithm_name = fit_pm_500_ab
+algorithm_info = fit_pm_500_ab
 parameters_name = best_value,mutation_rate,next_budget_to_change_fitness
 [triggers]
 number_target_triggers = 0

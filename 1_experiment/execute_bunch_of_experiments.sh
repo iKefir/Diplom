@@ -1,3 +1,5 @@
+# /usr/bin/bash
+
 # Нужно уметь выбрать
 #   Изменения фитнесса - параметр fitness = static | bitinvert | permutation
 #                        параметр fitness_freq = int - имеет смысл писать, если не static
@@ -18,7 +20,9 @@
 # ./execute_one_experiment.sh bi 1000 stat &&
 # ./execute_one_experiment.sh bi 1000 ab &&
 
-newpath="../IOHProfiler/Results/experiment_3.1"
+DIR=$(dirname $0)
+
+newpath=${DIR}/RunResults/experiment_3.1
 
 dimension=100
 restarts=100
@@ -29,7 +33,7 @@ for func_id in 4; do
 for ua in stat ab; do
   for fitness in stat; do
     for frequency in 0; do
-      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
+      if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
         exit 1
       fi
     done
@@ -39,7 +43,7 @@ done
 for ua in stat ab; do # stat ab
   for fitness in bi pm; do # bi pm
     for frequency in 1 5 10 50 100 500 1000 5000; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
-      if ! ./execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
+      if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
         exit 1
       fi
     done
@@ -47,5 +51,4 @@ for ua in stat ab; do # stat ab
 done
 done
 
-say DONE &&
 echo DONE

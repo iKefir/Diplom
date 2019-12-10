@@ -1,0 +1,4 @@
+set key autotitle columnhead
+set xlabel 'dimension'
+set ylabel 'frequency'
+plot '1_experiment/Results/Experimentation/OneMax/STAT/run_results.csv' using 1:2 with linespoints, '1_experiment/Results/Experimentation/OneMax/STAT/run_results.csv' using 1:3 with linespoints, '1_experiment/Results/Experimentation/OneMax/AB/run_results.csv' using 1:2 with linespoints, '1_experiment/Results/Experimentation/OneMax/AB/run_results.csv' using 1:3 with linespoints

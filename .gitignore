@@ -1,3 +1,9 @@
+# Big folders
+1_experiment/IOHProfiler
+1_experiment/RunResults
+1_experiment/config
+1_experiment/user_algorithm
+
 # Other
 *.DS_Store
 

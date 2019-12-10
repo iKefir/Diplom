@@ -20,7 +20,7 @@ enum Change_type {
   PERMUTATION
 };
 static const enum Change_type CHANGE_TYPE = PERMUTATION;
-static const int FITNESS_CHANGE_FREQUENCY = 5000;
+static const int FITNESS_CHANGE_FREQUENCY = 500;
 
 void get_default_permutation(int *permutation, const size_t dimension) {
   for (size_t i = 0; i < dimension; ++i) {

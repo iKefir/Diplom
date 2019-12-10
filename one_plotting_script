@@ -1,4 +1,0 @@
-set key autotitle columnhead
-set xlabel 'dimension'
-set ylabel 'frequency'
-plot '../IOHProfiler/Results/Experimentation/OneMax/STAT/run_results.csv' using 1:2 with linespoints, '../IOHProfiler/Results/Experimentation/OneMax/STAT/run_results.csv' using 1:3 with linespoints, '../IOHProfiler/Results/Experimentation/OneMax/AB/run_results.csv' using 1:2 with linespoints, '../IOHProfiler/Results/Experimentation/OneMax/AB/run_results.csv' using 1:3 with linespoints
