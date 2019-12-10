@@ -1,3 +1,5 @@
+# /usr/bin/bash
+
 DIR=$(dirname $0)
 partspath=${DIR}/user_algorithm/c
 resultname=assembled/assembled.c

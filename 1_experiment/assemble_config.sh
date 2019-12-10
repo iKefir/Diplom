@@ -1,3 +1,5 @@
+# /usr/bin/bash
+
 DIR=$(dirname $0)
 partspath=${DIR}/config
 resultname=assembled.c
