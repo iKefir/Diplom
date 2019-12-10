@@ -19,7 +19,7 @@ ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp ${DIR}/config/assembled.c ${resultpath}/configuration.ini &&
 # create user algorithm file
 ${DIR}/assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
-cp ${DIR}/user_algorithm/c/create_your_ua/assembled.c ${resultpath}/user_algorithm.c &&
+cp ${DIR}/user_algorithm/c/assembled/assembled.c ${resultpath}/user_algorithm.c &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
 # run experiment

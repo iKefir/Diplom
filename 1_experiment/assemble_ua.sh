@@ -1,6 +1,6 @@
 DIR=$(dirname $0)
-partspath=${DIR}/user_algorithm/c/create_your_ua
-resultname=assembled.c
+partspath=${DIR}/user_algorithm/c
+resultname=assembled/assembled.c
 configname=config.txt
 fitness_change_type=${1}
 fitness_change_frequency=${2}
