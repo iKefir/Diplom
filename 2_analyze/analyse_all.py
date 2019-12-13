@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-p_directory='1_experiment/Results/experiment_3.1/'
+p_directory='1_experiment/RunResults/experiment_3.1/'
 
 def prepare_res(inds, results, border):
     inds = inds[1:]

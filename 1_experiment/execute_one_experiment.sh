@@ -11,8 +11,7 @@ f_id=${7}
 bud_multiplier=${8}
 filename=${newpath_subfolder}
 
-echo ""
-echo START ${newpath_subfolder}
+printf "START ${newpath_subfolder}\n"
 
 # create config.ini
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
@@ -68,4 +67,4 @@ cp ${zipped_path} ${newpath}/all_zips/${new_prefix}${filename}.zip &&
 # keep your folders clean
 rm -rf ${newpath}/${newpath_subfolder} &&
 
-echo DONE ${newpath_subfolder}
+printf "DONE ${newpath_subfolder}\n\n"
