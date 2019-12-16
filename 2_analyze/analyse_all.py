@@ -71,8 +71,8 @@ for func_id, best_f in [('4', 50)]:
 
         fig = plt.figure()
         plt.grid(True)
-        fig.axes[0].set_ylim(48, 102)
-        # fig.axes[0].set_ylim(-2, 102)
+        # fig.axes[0].set_ylim(48, 102)
+        fig.axes[0].set_ylim(-2, 102)
         plt.plot(stat_inds, stat_results, '#1f77b4')
         plt.plot(ab_inds, ab_results, '#ff7f0e')
         func_id = os.path.basename(directory)
@@ -95,4 +95,4 @@ for func_id, best_f in [('4', 50)]:
         plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'changes', (comm_name[4:] + '.png')), dpi=100)
 
         plt.close('all')
-    # plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'best_fitness', 'all.png'), dpi=100)
+    plt.savefig(os.path.join(directory, 'all_zips', 'comb_graphs', 'best_fitness', 'all.png'), dpi=100)
