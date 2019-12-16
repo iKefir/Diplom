@@ -29,7 +29,7 @@ for func_id, best_f in [('4', 50)]:
     fls = [fl for fl in os.listdir(directory + '/all_zips') if fl.endswith('zip')]
     sys.stdout.write('\n')
     for i, fl in enumerate(fls):
-        sys.stdout.write('\r\033[K\033[1F\033[K' + ('%.0f' % (float(i*100) / len(fls))) + '%\tAnalyzing:\t' + fl + '\n')
+        sys.stdout.write('\r\033[K\033[1F\033[K' + ('%.0f' % (float(i*100) / len(fls))) + '%\t' + str(i) + ' / ' + str(len(fls)) + '\tAnalyzing:\t' + fl + '\n')
         sys.stdout.flush()
         ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f)
 

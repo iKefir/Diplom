@@ -11,7 +11,7 @@ f_id=${7}
 bud_multiplier=${8}
 filename=${newpath_subfolder}
 
-printf "START ${newpath_subfolder}\n"
+printf "RUNNING\t${newpath_subfolder}"
 
 # create config.ini
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
@@ -46,9 +46,9 @@ rm -rf ${resultpath}/${filename}${suffix} &&
 # ${DIR}/phase_transition_check.py ${newpath} ${newpath_subfolder}/${filename}${suffix} ${dimensions} &&
 
 # zip result
-pushd ${newpath}/${newpath_subfolder} &&
-zip -r -qq ${filename}${suffix} ${filename}${suffix} &&
-popd &&
+pushd ${newpath}/${newpath_subfolder} > /dev/null  &&
+zip -r -qq ${filename}${suffix} ${filename}${suffix} > /dev/null &&
+popd > /dev/null &&
 
 # move zipped result to destination
 zipped_path=${newpath}/${newpath_subfolder}/${filename}${suffix}.zip &&
@@ -65,6 +65,4 @@ done &&
 cp ${zipped_path} ${newpath}/all_zips/${new_prefix}${filename}.zip &&
 
 # keep your folders clean
-rm -rf ${newpath}/${newpath_subfolder} &&
-
-printf "DONE ${newpath_subfolder}\n\n"
+rm -rf ${newpath}/${newpath_subfolder}

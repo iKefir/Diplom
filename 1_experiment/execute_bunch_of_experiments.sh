@@ -29,13 +29,33 @@ restarts=100
 # func_id=4
 budget_multiplier=500
 
+full_counter=0
+for func_id in 4; do
+for ua in stat ab; do
+  for fitness in stat; do
+    for frequency in 0; do
+      ((full_counter++))
+    done
+  done
+done
+for ua in stat ab; do # stat ab
+  for fitness in bi pm; do # bi pm
+    for frequency in 1 5 10 50 100 500 1000 5000; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
+      ((full_counter++))
+    done
+  done
+done
+done
+
 counter=0
+
+printf "\n"
 
 for func_id in 4; do
 for ua in stat ab; do
   for fitness in stat; do
     for frequency in 0; do
-      printf "\r$((counter*100/11))%%\tExperimenting\n"
+      printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
       ((counter++))
       if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
         exit 1
@@ -47,7 +67,7 @@ done
 for ua in stat ab; do # stat ab
   for fitness in bi pm; do # bi pm
     for frequency in 1 5 10 50 100 500 1000 5000; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
-      printf "\r$((counter*100/11))%%\tExperimenting\n"
+      printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
       ((counter++))
       if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
         exit 1
@@ -57,4 +77,5 @@ for ua in stat ab; do # stat ab
 done
 done
 
-echo DONE
+printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
+printf "DONE\n"
