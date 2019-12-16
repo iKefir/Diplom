@@ -128,13 +128,12 @@ def analyse_zip(path, filename, best_fitness):
 
 
 def delete_files_from_zip(path, files_to_del):
-    with closing(zipfile.ZipFile(path, 'a')) as zf:
-        try:
-            cmd=['zip', '-d', path] + files_to_del
-            with open(os.devnull, 'w')  as FNULL:
-                subprocess.check_call(cmd, stdout=FNULL, stderr=FNULL)
-        except:
-            pass
+    try:
+        cmd=['zip', '-d', path] + files_to_del
+        with open(os.devnull, 'w')  as FNULL:
+            subprocess.check_call(cmd, stdout=FNULL, stderr=FNULL)
+    except:
+        pass
 
 
 def write_pngs(path, inds, results, changes):
