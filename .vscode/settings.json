@@ -1,3 +1,5 @@
 {
-    "python.dataScience.useNotebookEditor": false
+    "python.dataScience.useNotebookEditor": false,
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

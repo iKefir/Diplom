@@ -1,8 +1,8 @@
 
 
-for graph_type in best_fitness changes; do
+for graph_type in best_fitness changes mutation_rate; do
 
-p='1_experiment/Results/experiment_3.1'
+p='1_experiment/RunResults/experiment_3.1'
 
 s_p='all_zips/graphs/'${graph_type}
 

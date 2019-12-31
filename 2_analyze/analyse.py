@@ -11,6 +11,7 @@ import sys
 import tempfile
 import subprocess
 import csv
+import math
 from contextlib import closing
 from io import TextIOWrapper
 
@@ -27,6 +28,7 @@ def read_csv(path):
     inds = []
     results = []
     changes = []
+    mutation_rate = []
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with zf.open('best_fitness.csv') as csv_file:
             reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
@@ -41,18 +43,25 @@ def read_csv(path):
                 if i == 0:
                     continue
                 changes.append(float(row[0]))
+        with zf.open('mutation_rate.csv') as csv_file:
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                mutation_rate.append(float(row[1]))
 
-    return inds, results, changes
+    return inds, results, changes, mutation_rate
 
 
-def write_csv(path, inds, results, changes):
-    delete_files_from_zip(path, ['best_fitness.csv', 'changes.csv'])
+def write_csv(path, inds, results, changes, mutation_rates):
+    delete_files_from_zip(path, ['best_fitness.csv', 'changes.csv', 'mutation_rate.csv'])
 
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         tmpdir = tempfile.mkdtemp()
 
         bp_path = os.path.join(tmpdir, 'best_fitness.csv')
         cp_path = os.path.join(tmpdir, 'changes.csv')
+        mp_path = os.path.join(tmpdir, 'mutation_rate.csv')
 
         try:
             with open(bp_path, "w") as csv_file:
@@ -68,12 +77,20 @@ def write_csv(path, inds, results, changes):
                 for row in changes:
                     writer.writerow([row])
             zf.write(cp_path, os.path.basename(cp_path))
+
+            with open(mp_path, "w") as csv_file:
+                writer = csv.writer(csv_file, delimiter=',')
+                writer.writerow(['inds', 'mutation_rate'])
+                for row in zip(inds, mutation_rates):
+                    writer.writerow(row)
+            zf.write(mp_path, os.path.basename(mp_path))
         except IOError as e:
             print('IOError')
             print(e)
         else:
             os.remove(bp_path)
             os.remove(cp_path)
+            os.remove(mp_path)
         finally:
             os.rmdir(tmpdir)
 
@@ -82,6 +99,7 @@ def analyse_zip(path, filename, best_fitness):
     inds = []
     results = []
     changes = [0]
+    mutation_rates = []
     runs = 0
     ch_ind = 0
     can_add_run = True
@@ -100,6 +118,7 @@ def analyse_zip(path, filename, best_fitness):
                     ll = line.split(' ')
                     eval_num = int(ll[0]) - 1
                     best_f = float(ll[5])
+                    m_rate = float(ll[6])
                     # print eval_num
                     if (len(results) > eval_num):
                         results[eval_num] += best_f
@@ -116,15 +135,22 @@ def analyse_zip(path, filename, best_fitness):
                         changes[ch_ind] += 1
                         can_add_run = False
 
+                    if (len(mutation_rates) > eval_num):
+                        mutation_rates[eval_num] += m_rate
+                    else:
+                        mutation_rates.append(m_rate)
+
     new_results = []
-    for i, r in enumerate(results):
+    new_mutation_rates = []
+    for i, (r, m_r) in enumerate(zip(results, mutation_rates)):
         if (r >= 0.0):
             inds.append(i)
             new_results.append(r / runs)
+            new_mutation_rates.append(m_r / runs)
 
     changes = [change / 100.0 for change in changes]
 
-    return inds, new_results, changes
+    return inds, new_results, changes, new_mutation_rates
 
 
 def delete_files_from_zip(path, files_to_del):
@@ -136,17 +162,19 @@ def delete_files_from_zip(path, files_to_del):
         pass
 
 
-def write_pngs(path, inds, results, changes):
+def write_pngs(path, inds, results, changes, mutation_rates):
     bp_filename = 'best_fitness_plot.png'
     cp_filename = 'changes_plot.png'
+    mp_filename = 'mutation_rate_plot.png'
 
-    delete_files_from_zip(path, [bp_filename, cp_filename])
+    delete_files_from_zip(path, [bp_filename, cp_filename, mp_filename])
 
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         tmpdir = tempfile.mkdtemp()
 
         bp_path = os.path.join(tmpdir, bp_filename)
         cp_path = os.path.join(tmpdir, cp_filename)
+        mp_path = os.path.join(tmpdir, mp_filename)
         figure_path = os.path.join(os.path.dirname(path), 'graphs')
         if not os.path.exists(figure_path):
             os.mkdir(figure_path)
@@ -154,6 +182,8 @@ def write_pngs(path, inds, results, changes):
             os.mkdir(os.path.join(figure_path, 'best_fitness'))
         if not os.path.exists(os.path.join(figure_path, 'changes')):
             os.mkdir(os.path.join(figure_path, 'changes'))
+        if not os.path.exists(os.path.join(figure_path, 'mutation_rate')):
+            os.mkdir(os.path.join(figure_path, 'mutation_rate'))
         try:
             plt.figure()
             plt.plot(inds, results)
@@ -172,6 +202,14 @@ def write_pngs(path, inds, results, changes):
             plt.savefig(os.path.join(figure_path, 'changes', os.path.basename(path)[4:-4]), dpi=100)
             zf.write(cp_path, os.path.basename(cp_path))
 
+            plt.figure()
+            plt.plot(inds, list(map(math.log2, mutation_rates)))
+            plt.xlabel('evaluations (func_id: ' + func_id + ' run_params: '+ os.path.basename(path)[8:-4] + ')')
+            plt.ylabel('mutation rate')
+            plt.savefig(mp_path, dpi=100)
+            plt.savefig(os.path.join(figure_path, 'mutation_rate', os.path.basename(path)[4:-4] + '.png'), dpi=100)
+            zf.write(mp_path, os.path.basename(mp_path))
+
             plt.close('all')
         except IOError as e:
             print('IOError')
@@ -179,6 +217,7 @@ def write_pngs(path, inds, results, changes):
         else:
             os.remove(bp_path)
             os.remove(cp_path)
+            os.remove(mp_path)
         finally:
             os.rmdir(tmpdir)
 
@@ -193,15 +232,15 @@ def process_zip(path, best_fitness, analyse=False):
     inds = []
     results = []
     changes = []
-    if (len(csvs) == 2) and (analyse == False):
-        inds, results, changes = read_csv(path)
-        write_pngs(path, inds, results, changes)
+    if (len(csvs) == 3) and (analyse == False):
+        inds, results, changes, mutation_rates = read_csv(path)
+        write_pngs(path, inds, results, changes, mutation_rates)
     else:
-        inds, results, changes = analyse_zip(path, cdats[0], best_fitness)
-        write_csv(path, inds, results, changes)
-        write_pngs(path, inds, results, changes)
+        inds, results, changes, mutation_rates = analyse_zip(path, cdats[0], best_fitness)
+        write_csv(path, inds, results, changes, mutation_rates)
+        write_pngs(path, inds, results, changes, mutation_rates)
 
-    return inds, results, changes
+    return inds, results, changes, mutation_rates
 
 
 if __name__ == '__main__':
