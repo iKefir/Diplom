@@ -31,7 +31,7 @@ for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('5', 90), ('6', 33),
     for i, fl in enumerate(fls):
         sys.stdout.write('\r\033[K\033[1F\033[K' + ('%.0f' % (float(i*100) / len(fls))) + '%\t' + str(i) + ' / ' + str(len(fls)) + '\tAnalyzing:\t' + fl + '\n')
         sys.stdout.flush()
-        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f, analyse=True)
+        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f, analyse=False)
 
     common_pref='001-fit'
 
