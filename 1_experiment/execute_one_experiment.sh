@@ -2,7 +2,7 @@
 
 DIR=$(dirname $0)
 profilerpath=${DIR}/IOHProfiler
-resultpath=${profilerpath}/Experimentation/code-experiments/build/c
+resultpath=${profilerpath}/Experimentation/build/Cpp
 newpath_subfolder=fit_${1}_${2}_${3}
 dimensions=${4}
 restarts=${5}
@@ -11,18 +11,22 @@ f_id=${7}
 bud_multiplier=${8}
 filename=${newpath_subfolder}
 
-printf "RUNNING\t${newpath_subfolder}"
+printf "RUNNING\t${f_id}  ${newpath_subfolder}"
 
 # create config.ini
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
-cp ${DIR}/config/assembled.c ${resultpath}/configuration.ini &&
+cp ${DIR}/config/assembled.cpp ${resultpath}/configuration.ini &&
 # create user algorithm file
 ${DIR}/assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
-cp ${DIR}/user_algorithm/c/assembled/assembled.c ${resultpath}/user_algorithm.c &&
+cp ${DIR}/user_algorithm/cpp/assembled/assembled.cpp ${resultpath}/IOHprofiler_run_experiment.cpp &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
+# build experiment
+make -C ${profilerpath}/Experimentation > /dev/null &&
 # run experiment
-python ${profilerpath}/Experimentation/do.py run-c > /dev/null &&
+pushd ${resultpath} > /dev/null &&
+./bin/IOHprofiler_run_experiment > /dev/null &&
+popd > /dev/null &&
 # create new folder for results
 mkdir -p ${newpath}/${newpath_subfolder} &&
 # choose name for result to not intersect with results of same experiment from the past

@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-p_directory='1_experiment/RunResults/experiment_3.1/'
+p_directory='1_experiment/RunResults/experiment_4.1/'
 
 def prepare_res(inds, results, border):
     inds = inds[1:]
@@ -21,8 +21,9 @@ def prepare_res(inds, results, border):
         new_results.append(r)
     return new_inds, new_results
 
-# for func_id, best_f in [('16', 100)]:
-for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('5', 90), ('6', 33), ('7', 100), ('8', 51), ('9', 100), ('10', 100), ('11', 50), ('12', 90), ('13', 33), ('14', 100), ('15', 51), ('16', 100), ('17', 100)]:
+for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('7', 100), ('9', 100), ('11', 50), ('14', 100), ('16', 100), ]:
+# for func_id, best_f in [('4', 50)]:
+# for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('5', 90), ('6', 33), ('7', 100), ('8', 51), ('9', 100), ('10', 100), ('11', 50), ('12', 90), ('13', 33), ('14', 100), ('15', 51), ('16', 100), ('17', 100)]:
     directory = p_directory + func_id
     ress = {}
 
@@ -31,7 +32,7 @@ for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('5', 90), ('6', 33),
     for i, fl in enumerate(fls):
         sys.stdout.write('\r\033[K\033[1F\033[K' + ('%.0f' % (float(i*100) / len(fls))) + '%\t' + str(i) + ' / ' + str(len(fls)) + '\tAnalyzing:\t' + fl + '\n')
         sys.stdout.flush()
-        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f, analyse=False)
+        ress[fl] = analyse.process_zip(directory + '/all_zips/' + fl, best_f)
 
     common_pref='001-fit'
 
@@ -45,7 +46,8 @@ for func_id, best_f in [('1', 100), ('2', 100), ('4', 50), ('5', 90), ('6', 33),
         os.mkdir(os.path.join(directory, 'all_zips', 'comb_graphs', 'mutation_rate'))
 
     chgs = ['_bi', '_pm']
-    freqs = ['_1', '_5', '_10', '_50', '_100', '_500', '_1000', '_5000']
+    # freqs = ['_1', '_5', '_10', '_50', '_100', '_500', '_1000', '_5000']
+    freqs = ['_5', '_50', '_500', '_5000']
 
     prefixes = [common_pref + chg + freq for chg in chgs for freq in freqs]
     prefixes += ['001-fit_stat_0']
