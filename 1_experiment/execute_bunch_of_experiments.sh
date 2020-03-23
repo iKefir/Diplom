@@ -29,7 +29,7 @@ restarts=100
 budget_multiplier=6
 
 func_id_arr=(1 4 7 9 2 11 14 16) # 1 4 7 9 2 11 14 16
-ua_arr=(ab abopt aboptopt)
+ua_arr=(stat ab)
 fitness_arr=(bi pm)
 frequency_arr=(5000 500 50 5)
 

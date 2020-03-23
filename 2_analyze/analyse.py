@@ -106,10 +106,8 @@ def analyse_zip(path, filename, best_fitness):
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with TextIOWrapper(zf.open(filename), 'utf-8') as rr:
             for line in rr:
-                to_check = '"function evaluation" "current f(x)" "best-so-far f(x)" "current af(x)+b"  "best af(x)+b" "best_value" "mutation_rate" "next_budget_to_change_fitness"\n'
-                # to_check = '"function evaluation" "current f(x)" "best-so-far f(x)" "current af(x)+b"  "best af(x)+b" "best_value" "mutation_rate" "next_budget_to_change_fitness" \n'
-                # print line == to_check
-                if line == to_check:
+                to_check = '"function evaluation"'
+                if line.startswith(to_check):
                     runs += 1
                     ch_ind = 0
                     can_add_run = True
@@ -233,7 +231,7 @@ def process_zip(path, best_fitness, analyse=False):
     inds = []
     results = []
     changes = []
-    if (len(csvs) == 3) and (analyse == False):
+    if (len(csvs) > 0) and (analyse == False):
         inds, results, changes, mutation_rates = read_csv(path)
         write_pngs(path, inds, results, changes, mutation_rates)
     else:
