@@ -86,7 +86,7 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
     bool rea_mode_on = false;
     double *r_m_on = new double(1);
     *r_m_on = (double)rea_mode_on;
-    int gamma = 5;
+    int gamma = 1;
     int h_dist;
     std::vector<int> old_best(dimension);
     double old_best_value = *best_value;

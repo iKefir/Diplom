@@ -22,7 +22,7 @@
 
 DIR=$(dirname $0)
 
-newpath=${DIR}/../../1Diplom/1_experiment/RunResults/experiment_5.1
+newpath=${DIR}/../../1Diplom/1_experiment/RunResults/experiment_5.2
 
 dimension=100
 restarts=100
