@@ -17,12 +17,11 @@
 # algorithm_defines = ab | resend
 #   ab     - uses ab mutation rate change
 
-# ./execute_one_experiment.sh bi 1000 stat &&
-# ./execute_one_experiment.sh bi 1000 ab &&
-
 DIR=$(dirname $0)
 
-newpath=${DIR}/../../1Diplom/1_experiment/RunResults/experiment_4.5
+newpath=${DIR}/../../1Diplom/1_experiment/RunResults/$1
+
+worker_amount=${2:-1}
 
 dimension=100
 restarts=100
@@ -37,31 +36,45 @@ full_counter=$((${#func_id_arr[@]}*${#ua_arr[@]}*${#fitness_arr[@]}*${#frequency
 
 counter=0
 
-printf "\n"
-
+workers=()
+for (( worker_i=0; worker_i<$worker_amount; worker_i++ )); do
+  workers+=( "${DIR}/../../$((worker_i+1))Diplom/1_experiment/execute_one_experiment.sh" )
+done
+jobs=()
 for func_id in ${func_id_arr[@]}; do
 for ua in ${ua_arr[@]}; do
   for fitness in stat; do
     for frequency in 0; do
-      printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
-      ((counter++))
-      if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
-        exit 1
-      fi
+      jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
     done
   done
 
   for fitness in ${fitness_arr[@]}; do # bi pm
     for frequency in ${frequency_arr[@]}; do # 1 5 10 50 100 500 1000 5000 10000 20000 100000
-      printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
-      ((counter++))
-      if ! ${DIR}/execute_one_experiment.sh ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}; then
-        exit 1
-      fi
+      jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
     done
   done
 done
 done
 
-printf "\r\033[K\033[1F\033[K$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
-printf "DONE\n"
+printf "\n"
+for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
+  printf "\n"
+done
+
+for (( job_i=0; job_i<${#jobs[@]}; job_i+=${#workers[@]} )); do
+  printf "\r\033[K\033[1F\033[K"
+  for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
+    printf "\033[1F\033[K"
+  done
+  printf "$((counter*100/full_counter))%%\t$counter / $full_counter\tExperimenting\n"
+  for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
+    job=${jobs[$(( $job_i + $worker_i ))]}
+    worker=${workers[$worker_i]}
+    if [ -n "$job" ]; then
+      ((counter++))
+      $worker $job &
+    fi
+  done
+  wait
+done

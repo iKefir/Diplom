@@ -1,22 +1,15 @@
-
+# /usr/bin/bash
 
 for graph_type in best_fitness mutation_rate; do
 
-p='1_experiment/RunResults/experiment_4.5'
+p=1_experiment/RunResults/$1
 
 # merged stat and ab
 s_p='all_zips/comb_graphs/'${graph_type}
 
-# bi_arr=('fit_stat_0' 'fit_bi_5000' 'fit_bi_1000' 'fit_bi_500' 'fit_bi_100' 'fit_bi_50' 'fit_bi_10' 'fit_bi_5' 'fit_bi_1')
-# pm_arr=('fit_stat_0' 'fit_pm_5000' 'fit_pm_1000' 'fit_pm_500' 'fit_pm_100' 'fit_pm_50' 'fit_pm_10' 'fit_pm_5' 'fit_pm_1')
 bi_arr=('fit_stat_0' 'fit_bi_5000' 'fit_bi_500' 'fit_bi_50' 'fit_bi_5')
 pm_arr=('fit_stat_0' 'fit_pm_5000' 'fit_pm_500' 'fit_pm_50' 'fit_pm_5')
-# bi_arr=('fit_stat_0' 'fit_bi_1000' 'fit_bi_100' 'fit_bi_10')
-# pm_arr=('fit_stat_0' 'fit_pm_1000' 'fit_pm_100' 'fit_pm_10')
-# fun_ids=(1)
 fun_ids=(1 4 7 9)
-# fun_ids=(5 6 8 10)
-# fun_ids=(4 5 6 7 8 9 10)
 
 n_bi_arr=()
 n_pm_arr=()
@@ -38,12 +31,8 @@ mkdir ${p}/${graph_type}/OM
 mkdir ${p}/${graph_type}/OM/merged
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_bi_arr[@]} ${p}/${graph_type}/OM/merged/OM_bi_${graph_type}.png
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/OM/merged/OM_pm_${graph_type}.png
-# montage -geometry 1280x960 -tile 2x2 ${n_bi_arr[@]} ${p}/${graph_type}/OM/merged/OM_bi_${graph_type}.png
-# montage -geometry 1280x960 -tile 2x2 ${n_pm_arr[@]} ${p}/${graph_type}/OM/merged/OM_pm_${graph_type}.png
-# fun_ids=(2)
+
 fun_ids=(2 11 14 16)
-# fun_ids=(12 13 15 17)
-# fun_ids=(11 12 13 14 15 16 17)
 n_bi_arr=()
 n_pm_arr=()
 
@@ -63,7 +52,5 @@ mkdir ${p}/${graph_type}/LO
 mkdir ${p}/${graph_type}/LO/merged
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_bi_arr[@]} ${p}/${graph_type}/LO/merged/LO_bi_${graph_type}.png
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/LO/merged/LO_pm_${graph_type}.png
-# montage -geometry 1280x960 -tile 2x2 ${n_bi_arr[@]} ${p}/${graph_type}/LO/merged/LO_bi_${graph_type}.png
-# montage -geometry 1280x960 -tile 2x2 ${n_pm_arr[@]} ${p}/${graph_type}/LO/merged/LO_pm_${graph_type}.png
 
 done

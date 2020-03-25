@@ -11,7 +11,7 @@ f_id=${7}
 bud_multiplier=${8}
 filename=${newpath_subfolder}
 
-printf "RUNNING\t${f_id}  ${newpath_subfolder}"
+printf "RUNNING\t${f_id}  ${newpath_subfolder}\n"
 
 # create config.ini
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
