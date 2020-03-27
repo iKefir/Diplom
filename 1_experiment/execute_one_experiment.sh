@@ -11,8 +11,7 @@ f_id=${7}
 bud_multiplier=${8}
 filename=${newpath_subfolder}
 
-printf "RUNNING\t${f_id}  ${newpath_subfolder}"
-
+printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tASSEMBLING\n"
 # create config.ini
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp ${DIR}/config/assembled.cpp ${resultpath}/configuration.ini &&
@@ -22,8 +21,10 @@ cp ${DIR}/user_algorithm/cpp/assembled/assembled.cpp ${resultpath}/IOHprofiler_r
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
 # build experiment
+printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tCOMPILING\n"
 make -C ${profilerpath}/Experimentation > /dev/null &&
 # run experiment
+printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tRUNNING\n"
 pushd ${resultpath} > /dev/null &&
 ./bin/IOHprofiler_run_experiment > /dev/null &&
 popd > /dev/null &&
@@ -50,6 +51,7 @@ rm -rf ${resultpath}/${filename}${suffix} &&
 # ${DIR}/phase_transition_check.py ${newpath} ${newpath_subfolder}/${filename}${suffix} ${dimensions} &&
 
 # zip result
+printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tCOMPRESSING\n"
 pushd ${newpath}/${newpath_subfolder} > /dev/null  &&
 zip -r -qq ${filename}${suffix} ${filename}${suffix} > /dev/null &&
 popd > /dev/null &&
@@ -70,3 +72,5 @@ cp ${zipped_path} ${newpath}/all_zips/${new_prefix}${filename}.zip &&
 
 # keep your folders clean
 rm -rf ${newpath}/${newpath_subfolder}
+
+printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tFINISHED\n"
