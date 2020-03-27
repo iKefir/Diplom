@@ -55,7 +55,6 @@ double evaluate(std::shared_ptr<IOHprofiler_problem<int>> problem,
 void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
                             std::shared_ptr<IOHprofiler_csv_logger> logger)
 {
-    size_t number_of_parameters = 3;
     size_t dimension = problem->IOHprofiler_get_number_of_variables();
     std::vector<int> parent(dimension);
     std::vector<int> offspring(dimension);
@@ -188,9 +187,7 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
 
         if (y >= *best_value)
         {
-#if defined(AB) || defined(ABOPT)
             times_got_improvement += 1;
-#endif
             best = offspring;
             *best_value = y;
         }
@@ -218,7 +215,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
             }
         }
 
-#if defined(AB)
         if (times_got_improvement == 1)
         {
             *mutation_rate *= 2;
@@ -229,7 +225,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
         }
         *mutation_rate = std::max(std::min(*mutation_rate, 0.5), min_mutation_rate);
         times_got_improvement = 0;
-#endif
         parent = best;
     }
 }

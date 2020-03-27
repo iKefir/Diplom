@@ -48,15 +48,12 @@ if [[ ! -p $processing_info_pipe ]]; then
 fi
 
 workers=()
-worker_last_info=()
-finished_workers=0
 jobs=()
-job_i=0
 
 setup_workers(){
   for (( worker_i=0; worker_i<$worker_amount; worker_i++ )); do
-  workers+=( "${DIR}/../../$((worker_i+1))Diplom/1_experiment/execute_one_experiment.sh" )
-  worker_last_info+=( "WAITING" )
+    workers+=( "${DIR}/../../$((worker_i+1))Diplom/1_experiment/execute_one_experiment.sh" )
+    worker_last_info+=( "WAITING" )
   done
 }
 
@@ -64,24 +61,23 @@ generate_jobs(){
   dimension=100
   restarts=100
   budget_multiplier=6
-  ua_file="algo_rea.cpp" # "algo.cpp" "algo_rea.cpp"
 
-  func_id_arr=(1 4 7 9 2 11 14 16) # 1 4 7 9 2 11 14 16
-  ua_arr=(stat ab)
-  fitness_arr=(bi pm)
-  frequency_arr=(5000 500 50 5)
+  func_id_arr=(1) # 1 4 7 9 2 11 14 16
+  ua_arr=(stat ab stat_rea ab_rea)
+  fitness_arr=(bi)
+  frequency_arr=(5000)
 
   for func_id in ${func_id_arr[@]}; do
     for ua in ${ua_arr[@]}; do
       for fitness in stat; do
         for frequency in 0; do
-          jobs+=( "${ua_file} ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
         done
       done
 
       for fitness in ${fitness_arr[@]}; do
         for frequency in ${frequency_arr[@]}; do
-          jobs+=( "${ua_file} ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
         done
       done
     done
@@ -90,17 +86,21 @@ generate_jobs(){
 
 print_processing_info(){
   job_i=0
+  worker_last_info=()
+  for (( worker_i=0; worker_i<$worker_amount; worker_i++ )); do
+    worker_last_info+=( "WAITING" )
+    printf "\n"
+  done
+  printf "\n"
   while true; do
     if read line <$processing_info_pipe; then
       # printf "READ: $line\n"
       if [[ "$line" == 'tinc' ]]; then
         ((job_i++))
-      fi
-      if [[ "$line" == 'quit' ]]; then
-        break
-      fi
-      if IFS=',' read -r -a args <<< "$line"; then
-        worker_last_info[${args[0]}]="${args[1]}"
+      else
+        if IFS=',' read -r -a args <<< "$line"; then
+          worker_last_info[${args[0]}]="${args[1]}"
+        fi
       fi
       to_print="\r\033[K\033[1F\033[K"
       for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
@@ -132,16 +132,14 @@ start_worker(){
 setup_workers
 generate_jobs
 
-printf "\n"
-for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
-  printf "\n"
-done
+job_i=0
+finished_workers=0
 
 print_processing_info ${#jobs[@]} &
 for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
   start_worker $worker_i $job_i &
   ((job_i++))
-  sleep 1
+  sleep 0.2
 done
 while true; do
   if [[ ! -p $pipe ]]; then
