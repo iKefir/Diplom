@@ -64,6 +64,7 @@ generate_jobs(){
   dimension=100
   restarts=100
   budget_multiplier=6
+  ua_file="algo_rea.cpp" # "algo.cpp" "algo_rea.cpp"
 
   func_id_arr=(1 4 7 9 2 11 14 16) # 1 4 7 9 2 11 14 16
   ua_arr=(stat ab)
@@ -74,13 +75,13 @@ generate_jobs(){
     for ua in ${ua_arr[@]}; do
       for fitness in stat; do
         for frequency in 0; do
-          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${ua_file} ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
         done
       done
 
       for fitness in ${fitness_arr[@]}; do
         for frequency in ${frequency_arr[@]}; do
-          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${ua_file} ${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
         done
       done
     done

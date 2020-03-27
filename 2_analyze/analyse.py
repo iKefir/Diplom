@@ -29,6 +29,7 @@ def read_csv(path):
     results = []
     changes = []
     mutation_rate = []
+    rea_mode_on = []
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with zf.open('best_fitness.csv') as csv_file:
             reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
@@ -49,12 +50,18 @@ def read_csv(path):
                 if i == 0:
                     continue
                 mutation_rate.append(float(row[1]))
+        with zf.open('rea_mode_on.csv') as csv_file:
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                rea_mode_on.append(float(row[1]))
 
-    return inds, results, changes, mutation_rate
+    return inds, results, changes, mutation_rate, rea_mode_on
 
 
-def write_csv(path, inds, results, changes, mutation_rates):
-    delete_files_from_zip(path, ['best_fitness.csv', 'changes.csv', 'mutation_rate.csv'])
+def write_csv(path, inds, results, changes, mutation_rates, rea_mode_on):
+    delete_files_from_zip(path, ['best_fitness.csv', 'changes.csv', 'mutation_rate.csv', 'rea_mode_on.csv'])
 
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         tmpdir = tempfile.mkdtemp()
@@ -62,6 +69,7 @@ def write_csv(path, inds, results, changes, mutation_rates):
         bp_path = os.path.join(tmpdir, 'best_fitness.csv')
         cp_path = os.path.join(tmpdir, 'changes.csv')
         mp_path = os.path.join(tmpdir, 'mutation_rate.csv')
+        rmp_path = os.path.join(tmpdir, 'rea_mode_on.csv')
 
         try:
             with open(bp_path, "w") as csv_file:
@@ -84,6 +92,13 @@ def write_csv(path, inds, results, changes, mutation_rates):
                 for row in zip(inds, mutation_rates):
                     writer.writerow(row)
             zf.write(mp_path, os.path.basename(mp_path))
+            
+            with open(rmp_path, "w") as csv_file:
+                writer = csv.writer(csv_file, delimiter=',')
+                writer.writerow(['inds', 'rea_mode_on'])
+                for row in zip(inds, rea_mode_on):
+                    writer.writerow(row)
+            zf.write(rmp_path, os.path.basename(rmp_path))
         except IOError as e:
             print('IOError')
             print(e)
@@ -91,6 +106,7 @@ def write_csv(path, inds, results, changes, mutation_rates):
             os.remove(bp_path)
             os.remove(cp_path)
             os.remove(mp_path)
+            os.remove(rmp_path)
         finally:
             os.rmdir(tmpdir)
 
@@ -100,6 +116,7 @@ def analyse_zip(path, filename, best_fitness):
     results = []
     changes = [0]
     mutation_rates = []
+    rea_mode_on = []
     runs = 0
     ch_ind = 0
     can_add_run = True
@@ -118,11 +135,17 @@ def analyse_zip(path, filename, best_fitness):
                     eval_num = int(ll[0]) - 1
                     best_f = float(ll[5])
                     m_rate = float(ll[6])
+                    is_rea_on = float(ll[8]) 
                     # print eval_num
                     if (len(results) > eval_num):
                         results[eval_num] += best_f
                     else:
                         results.append(best_f)
+                    if (len(rea_mode_on) > eval_num):
+                        rea_mode_on[eval_num] += is_rea_on
+                    else:
+                        rea_mode_on.append(is_rea_on)
+
 
                     if best_f < 0.0:
                         ch_ind += 1
@@ -141,15 +164,17 @@ def analyse_zip(path, filename, best_fitness):
 
     new_results = []
     new_mutation_rates = []
-    for i, (r, m_r) in enumerate(zip(results, mutation_rates)):
+    new_rea_mode_on = []
+    for i, (r, m_r, rea) in enumerate(zip(results, mutation_rates, rea_mode_on)):
         if (r >= 0.0):
             inds.append(i)
             new_results.append(r / runs)
             new_mutation_rates.append(m_r / runs)
+            new_rea_mode_on.append(rea / runs)
 
     changes = [change / 100.0 for change in changes]
 
-    return inds, new_results, changes, new_mutation_rates
+    return inds, new_results, changes, new_mutation_rates, new_rea_mode_on
 
 
 def delete_files_from_zip(path, files_to_del):
@@ -161,7 +186,7 @@ def delete_files_from_zip(path, files_to_del):
         pass
 
 
-def write_pngs(path, inds, results, changes, mutation_rates):
+def write_pngs(path, inds, results, changes, mutation_rates, rea_mode_on):
     bp_filename = 'best_fitness_plot.png'
     cp_filename = 'changes_plot.png'
     mp_filename = 'mutation_rate_plot.png'
@@ -231,15 +256,17 @@ def process_zip(path, best_fitness, analyse=False):
     inds = []
     results = []
     changes = []
+    mutation_rates = []
+    rea_mode_on = []
     if (len(csvs) > 0) and (analyse == False):
-        inds, results, changes, mutation_rates = read_csv(path)
-        write_pngs(path, inds, results, changes, mutation_rates)
+        inds, results, changes, mutation_rates, rea_mode_on = read_csv(path)
+        write_pngs(path, inds, results, changes, mutation_rates, rea_mode_on)
     else:
-        inds, results, changes, mutation_rates = analyse_zip(path, cdats[0], best_fitness)
-        write_csv(path, inds, results, changes, mutation_rates)
-        write_pngs(path, inds, results, changes, mutation_rates)
+        inds, results, changes, mutation_rates, rea_mode_on = analyse_zip(path, cdats[0], best_fitness)
+        write_csv(path, inds, results, changes, mutation_rates, rea_mode_on)
+        write_pngs(path, inds, results, changes, mutation_rates, rea_mode_on)
 
-    return inds, results, changes, mutation_rates
+    return inds, results, changes, mutation_rates, rea_mode_on
 
 
 if __name__ == '__main__':
