@@ -66,9 +66,9 @@ generate_jobs(){
   budget_multiplier=6
 
   func_id_arr=(1 4 7 9 2 11 14 16) # 1 4 7 9 2 11 14 16
-  ua_arr=(stat)
-  fitness_arr=(bi)
-  frequency_arr=(5000 500)
+  ua_arr=(stat ab)
+  fitness_arr=(bi pm)
+  frequency_arr=(5000 500 50 5)
 
   for func_id in ${func_id_arr[@]}; do
     for ua in ${ua_arr[@]}; do
@@ -94,13 +94,13 @@ print_processing_info(){
       # printf "READ: $line\n"
       if [[ "$line" == 'tinc' ]]; then
         ((job_i++))
-        continue
       fi
       if [[ "$line" == 'quit' ]]; then
         break
       fi
-      IFS=',' read -r -a args <<< "$line"
-      worker_last_info[${args[0]}]="${args[1]}"
+      if IFS=',' read -r -a args <<< "$line"; then
+        worker_last_info[${args[0]}]="${args[1]}"
+      fi
       to_print="\r\033[K\033[1F\033[K"
       for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
         to_print+="\033[1F\033[K"
@@ -114,17 +114,12 @@ print_processing_info(){
   done
 }
 
-update_processing_info(){
-  # printf "WRITE: $1,$2\n"
-  echo "$1,$2" >$processing_info_pipe
-}
-
 start_worker(){
   job=${jobs[$2]}
   worker=${workers[$1]}
   # printf "Worker: $worker\tJob: $job\n"
   if [ -n "$job" ]; then
-    $worker $job | while read line; do update_processing_info $1 "$line"; done
+    $worker $job | while read line; do echo "$1,$line" >$processing_info_pipe; done
     echo "tinc" >$processing_info_pipe
     sleep 1
     echo "$1" >$pipe
