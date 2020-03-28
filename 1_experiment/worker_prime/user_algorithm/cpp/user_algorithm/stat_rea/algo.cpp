@@ -2,10 +2,13 @@
 #include <cstdio>
 #include <algorithm>
 
-int hamming_distance(std::vector<int> first, std::vector<int> second) {
+int hamming_distance(std::vector<int> first, std::vector<int> second)
+{
     int counter = 0;
-    for (int i = 0; i < first.size() && i < second.size(); ++i) {
-        if (first[i] != second[i]) {
+    for (int i = 0; i < first.size() && i < second.size(); ++i)
+    {
+        if (first[i] != second[i])
+        {
             ++counter;
         }
     }
@@ -196,7 +199,7 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
         {
             break;
         }
-        
+
         if (rea_mode_on)
         {
             h_dist = hamming_distance(old_best, offspring);
@@ -208,7 +211,8 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
                 best_fitness_for_solution_for_distance[h_dist] = y;
             }
 
-            if (*best_value >= old_best_value) {
+            if (*best_value >= old_best_value)
+            {
                 rea_mode_on = false;
                 *r_m_on = (double)rea_mode_on;
             }

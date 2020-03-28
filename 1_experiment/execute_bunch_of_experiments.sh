@@ -63,8 +63,9 @@ generate_jobs(){
 
   func_id_arr=(2) # 1 4 7 9 2 11 14 16
   ua_arr=(stat ab) # stat ab stat_rea ab_rea
+  carola_ua_arr=(carola_stat_rea carola_ab_rea)
   fitness_arr=(bi) # stat bi pm
-  frequency_arr=(5000 500 50 5)
+  frequency_arr=(100 50)
   gamma_arr=(1 5 10 15)
 
   for func_id in ${func_id_arr[@]}; do
@@ -72,18 +73,30 @@ generate_jobs(){
       for fitness in stat; do
         for frequency in 0; do
           jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
-          for gamma in ${gamma_arr[@]}; do
-            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
-          done
+          jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 1" )
         done
       done
 
       for fitness in ${fitness_arr[@]}; do
         for frequency in ${frequency_arr[@]}; do
           jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
-          for gamma in ${gamma_arr[@]}; do
-            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
-          done
+          jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 1" )
+        done
+      done
+    done
+  done
+
+  for func_id in ${func_id_arr[@]}; do
+    for ua in ${carola_ua_arr[@]}; do
+      for fitness in stat; do
+        for frequency in 0; do
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 5" )
+        done
+      done
+
+      for fitness in ${fitness_arr[@]}; do
+        for frequency in ${frequency_arr[@]}; do
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 5" )
         done
       done
     done
@@ -127,6 +140,7 @@ start_worker(){
   # printf "Worker: $worker\tJob: $job\n"
   if [ -n "$job" ]; then
     $worker $job | while read line; do echo "$1,$line" >$processing_info_pipe; done
+    sleep 1
     echo "tinc" >$processing_info_pipe
     sleep 1
     echo "$1" >$pipe
