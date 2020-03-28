@@ -9,6 +9,11 @@ restarts=${5}
 newpath=${6}
 f_id=${7}
 bud_multiplier=${8}
+user_algorithm_param=${9}
+
+if [ "$user_algorithm_param" -ne 0 ]; then
+    newpath_subfolder+="_$user_algorithm_param"
+fi
 
 filename=${newpath_subfolder}
 
@@ -17,7 +22,7 @@ printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tASSEMBLING\n"
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp ${DIR}/config/assembled.cpp ${resultpath}/configuration.ini &&
 # create user algorithm file
-${DIR}/assemble_ua.sh ${1} ${2} ${3} ${restarts} ${bud_multiplier} &&
+${DIR}/assemble_ua.sh ${restarts} ${bud_multiplier} ${1} ${2} ${3} ${user_algorithm_param} &&
 cp ${DIR}/user_algorithm/cpp/assembled/assembled.cpp ${resultpath}/IOHprofiler_run_experiment.cpp &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
@@ -33,17 +38,15 @@ popd > /dev/null &&
 mkdir -p ${newpath}/${newpath_subfolder} &&
 # choose name for result to not intersect with results of same experiment from the past
 suffix="" &&
-if [ -e ${newpath}/${newpath_subfolder}/${filename} ]
-then
-  for i in $(seq -f "%03g" 1 999)
-  do
-    if ! [ -e ${newpath}/${newpath_subfolder}/${filename}-${i} ]
-    then
-      suffix=-${i}
-      break
-    fi
-  done
-  mv ${resultpath}/${filename} ${resultpath}/${filename}${suffix}
+if [ -e ${newpath}/${newpath_subfolder}/${filename} ]; then
+    for i in $(seq -f "%03g" 1 999)
+    do
+        if ! [ -e ${newpath}/${newpath_subfolder}/${filename}-${i} ]; then
+            suffix=-${i}
+            break
+        fi
+    done
+    mv ${resultpath}/${filename} ${resultpath}/${filename}${suffix}
 fi &&
 cp -r ${resultpath}/${filename}${suffix} ${newpath}/${newpath_subfolder}/ &&
 rm -rf ${resultpath}/${filename}${suffix} &&
@@ -61,13 +64,11 @@ popd > /dev/null &&
 zipped_path=${newpath}/${newpath_subfolder}/${filename}${suffix}.zip &&
 mkdir -p ${newpath}/all_zips &&
 new_prefix="" &&
-for i in $(seq -f "%03g" 1 999)
-do
-  if ! [ -e ${newpath}/all_zips/${i}-${filename}.zip ]
-  then
-    new_prefix=${i}-
-    break
-  fi
+for i in $(seq -f "%03g" 1 999); do
+    if ! [ -e ${newpath}/all_zips/${i}-${filename}.zip ]; then
+        new_prefix=${i}-
+        break
+    fi
 done &&
 cp ${zipped_path} ${newpath}/all_zips/${new_prefix}${filename}.zip &&
 

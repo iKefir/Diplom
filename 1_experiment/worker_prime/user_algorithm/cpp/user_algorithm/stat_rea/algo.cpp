@@ -85,7 +85,7 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
     bool rea_mode_on = false;
     double *r_m_on = new double(1);
     *r_m_on = (double)rea_mode_on;
-    int gamma = 1;
+    int gamma = USER_ALGORITHM_PARAM;
     int h_dist;
     std::vector<int> old_best(dimension);
     double old_best_value = *best_value;
@@ -187,7 +187,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
 
         if (y >= *best_value)
         {
-            times_got_improvement += 1;
             best = offspring;
             *best_value = y;
         }
@@ -215,16 +214,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
             }
         }
 
-        if (times_got_improvement == 1)
-        {
-            *mutation_rate *= 2;
-        }
-        else
-        {
-            *mutation_rate *= 0.5;
-        }
-        *mutation_rate = std::max(std::min(*mutation_rate, 0.5), min_mutation_rate);
-        times_got_improvement = 0;
         parent = best;
     }
 }

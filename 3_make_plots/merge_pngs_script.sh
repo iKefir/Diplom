@@ -2,7 +2,9 @@
 
 for graph_type in best_fitness mutation_rate; do
 
-p=1_experiment/RunResults/$1
+DIR=$(dirname $0)
+
+p=${DIR}/../../RunResults/$1
 
 # merged stat and ab
 s_p='all_zips/comb_graphs/'${graph_type}
@@ -30,7 +32,7 @@ mkdir ${p}/${graph_type}
 mkdir ${p}/${graph_type}/OM
 mkdir ${p}/${graph_type}/OM/merged
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_bi_arr[@]} ${p}/${graph_type}/OM/merged/OM_bi_${graph_type}.png
-montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/OM/merged/OM_pm_${graph_type}.png
+montage -geometry 1280x960 -tile ${#pm_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/OM/merged/OM_pm_${graph_type}.png
 
 fun_ids=(2 11 14 16)
 n_bi_arr=()
@@ -51,6 +53,6 @@ done
 mkdir ${p}/${graph_type}/LO
 mkdir ${p}/${graph_type}/LO/merged
 montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_bi_arr[@]} ${p}/${graph_type}/LO/merged/LO_bi_${graph_type}.png
-montage -geometry 1280x960 -tile ${#bi_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/LO/merged/LO_pm_${graph_type}.png
+montage -geometry 1280x960 -tile ${#pm_arr[@]}x${#fun_ids[@]} ${n_pm_arr[@]} ${p}/${graph_type}/LO/merged/LO_pm_${graph_type}.png
 
 done

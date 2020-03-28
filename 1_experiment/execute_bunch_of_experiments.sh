@@ -24,7 +24,7 @@ fi
 
 DIR=$(dirname $0)
 
-newpath=${DIR}/../../1Diplom/1_experiment/RunResults/$1
+newpath=${DIR}/../../RunResults/$1
 
 worker_amount=${2:-1}
 
@@ -52,8 +52,7 @@ jobs=()
 
 setup_workers(){
   for (( worker_i=0; worker_i<$worker_amount; worker_i++ )); do
-    workers+=( "${DIR}/../../$((worker_i+1))Diplom/1_experiment/execute_one_experiment.sh" )
-    worker_last_info+=( "WAITING" )
+    workers+=( "${DIR}/$((worker_i+1))worker/execute_one_experiment.sh" )
   done
 }
 
@@ -62,22 +61,29 @@ generate_jobs(){
   restarts=100
   budget_multiplier=6
 
-  func_id_arr=(1) # 1 4 7 9 2 11 14 16
-  ua_arr=(stat ab stat_rea ab_rea)
-  fitness_arr=(bi)
-  frequency_arr=(5000)
+  func_id_arr=(2) # 1 4 7 9 2 11 14 16
+  ua_arr=(stat ab) # stat ab stat_rea ab_rea
+  fitness_arr=(bi) # stat bi pm
+  frequency_arr=(5000 500 50 5)
+  gamma_arr=(1 5 10 15)
 
   for func_id in ${func_id_arr[@]}; do
     for ua in ${ua_arr[@]}; do
       for fitness in stat; do
         for frequency in 0; do
-          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
+          for gamma in ${gamma_arr[@]}; do
+            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
+          done
         done
       done
 
       for fitness in ${fitness_arr[@]}; do
         for frequency in ${frequency_arr[@]}; do
-          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+          jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
+          for gamma in ${gamma_arr[@]}; do
+            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
+          done
         done
       done
     done
@@ -139,7 +145,7 @@ print_processing_info ${#jobs[@]} &
 for (( worker_i=0; worker_i<${#workers[@]}; worker_i++ )); do
   start_worker $worker_i $job_i &
   ((job_i++))
-  sleep 0.2
+  sleep 1
 done
 while true; do
   if [[ ! -p $pipe ]]; then
