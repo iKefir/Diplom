@@ -48,32 +48,77 @@ size_t get_next_budget(size_t i)
     // return i + count + to_add;
 }
 
+random_shuffle(std::vector<int> &to_shuffle)
+{
+    int rand_ind = to_shuffle.size();
+    for (int i = to_shuffle.size() - 1; i > -1; --i)
+    {
+        while (rand_ind >= to_shuffle.size())
+        {
+            rand_ind = (int)(random_generator.IOHprofiler_uniform_rand() * to_shuffle.size()); // if generates from 0 to 100 - have to deal with 100
+        }
+        std::swap(to_shuffle[i], to_shuffle[rand_ind]);
+    }
+}
+
 bool change_fitness_function(std::vector<int> &permutation,
                              std::vector<int> &target_function,
                              const size_t dimension,
                              const enum Change_type c_t)
 {
-    if (c_t == BIT_INVERT)
+    if (c_t == BIT_INVERT_1)
     {
-        int flip_index = dimension;
-        while (flip_index >= dimension)
-        {
-            flip_index = (int)(random_generator.IOHprofiler_uniform_rand() * dimension); // if generates from 0 to 100 - have to deal with 100
+        std::vector<int> inds(dimension);
+        indices = std::iota(inds.begin(), inds.end(), 0);
+        random_shuffle(indices);
+        for (int i = 0; i < 1; ++i) {
+            target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
-        target_function[flip_index] = (target_function[flip_index] + 1) % 2;
+        return true;
+    }
+    if (c_t == BIT_INVERT_2)
+    {
+        std::vector<int> inds(dimension);
+        indices = std::iota(inds.begin(), inds.end(), 0);
+        random_shuffle(indices);
+        for (int i = 0; i < 2; ++i) {
+            target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
+        }
+        return true;
+    }
+    if (c_t == BIT_INVERT_3)
+    {
+        std::vector<int> inds(dimension);
+        indices = std::iota(inds.begin(), inds.end(), 0);
+        random_shuffle(indices);
+        for (int i = 0; i < 3; ++i) {
+            target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
+        }
+        return true;
+    }
+    if (c_t == BIT_INVERT_4)
+    {
+        std::vector<int> inds(dimension);
+        indices = std::iota(inds.begin(), inds.end(), 0);
+        random_shuffle(indices);
+        for (int i = 0; i < 4; ++i) {
+            target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
+        }
+        return true;
+    }
+    if (c_t == BIT_INVERT_5)
+    {
+        std::vector<int> inds(dimension);
+        indices = std::iota(inds.begin(), inds.end(), 0);
+        random_shuffle(indices);
+        for (int i = 0; i < 5; ++i) {
+            target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
+        }
         return true;
     }
     if (c_t == PERMUTATION)
     {
-        int rand_ind = dimension;
-        for (int i = dimension - 1; i > -1; --i)
-        {
-            while (rand_ind >= dimension)
-            {
-                rand_ind = (int)(random_generator.IOHprofiler_uniform_rand() * dimension); // if generates from 0 to 100 - have to deal with 100
-            }
-            std::swap(permutation[i], permutation[rand_ind]);
-        }
+        random_shuffle(permutation);
         return true;
     }
     // c_t == NO_CHANGE
@@ -81,9 +126,9 @@ bool change_fitness_function(std::vector<int> &permutation,
 }
 
 std::vector<int> apply_fitness_function_change_to_individual(std::vector<int> const &individual,
-                                                              std::vector<int> const &permutation,
-                                                              std::vector<int> const &target_function,
-                                                              const size_t dimension)
+                                                             std::vector<int> const &permutation,
+                                                             std::vector<int> const &target_function,
+                                                             const size_t dimension)
 {
     std::vector<int> individual_to_send(dimension);
     for (size_t i = 0; i < dimension; ++i)

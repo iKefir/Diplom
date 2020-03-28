@@ -129,22 +129,25 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
             if (is_fitness_changed)
             {
                 // init rea here
-                rea_mode_on = true;
-                *r_m_on = (double)rea_mode_on;
-                old_best = best;
-                old_best_value = *best_value;
-                *best_value = evaluate(problem, logger, best, permutation, target_function, dimension);
-                ++count;
-                if (count == max_budget)
+                if (!rea_mode_on)
                 {
-                    break;
-                }
-                best_solution_for_distance = {best};
-                best_fitness_for_solution_for_distance = {*best_value};
-                for (int rea_count = 0; rea_count < gamma + 1; ++rea_count)
-                {
-                    best_solution_for_distance.push_back({-1});
-                    best_fitness_for_solution_for_distance.push_back(-1.0);
+                    rea_mode_on = true;
+                    *r_m_on = (double)rea_mode_on;
+                    old_best = best;
+                    old_best_value = *best_value;
+                    *best_value = evaluate(problem, logger, best, permutation, target_function, dimension);
+                    ++count;
+                    if (count == max_budget)
+                    {
+                        break;
+                    }
+                    best_solution_for_distance = {best};
+                    best_fitness_for_solution_for_distance = {*best_value};
+                    for (int rea_count = 0; rea_count < gamma + 1; ++rea_count)
+                    {
+                        best_solution_for_distance.push_back({-1});
+                        best_fitness_for_solution_for_distance.push_back(-1.0);
+                    }
                 }
             }
 
