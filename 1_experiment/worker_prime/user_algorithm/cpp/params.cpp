@@ -1,7 +1,11 @@
 /**
  * The random seed. Change it if needed.
  */
-IOHprofiler_random random_generator(1);
+#include <random>
+
+int RANDOM_SEED = 1;
+IOHprofiler_random random_generator(RANDOM_SEED);
+std::mt19937 shuffle_random_generator(RANDOM_SEED);
 
 enum Change_type {
   NO_CHANGE,

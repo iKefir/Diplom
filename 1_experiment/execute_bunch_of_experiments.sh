@@ -72,14 +72,18 @@ generate_jobs(){
       for fitness in stat; do
         for frequency in 0; do
           jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
-          jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 1" )
+          for gamma in ${gamma_arr[@]}; do
+            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
+          done
         done
       done
 
       for fitness in ${fitness_arr[@]}; do
         for frequency in ${frequency_arr[@]}; do
           jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
-          jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 1" )
+          for gamma in ${gamma_arr[@]}; do
+            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
+          done
         done
       done
     done

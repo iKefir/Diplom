@@ -1,10 +1,9 @@
+#include <numeric>
+
 std::vector<int> get_default_permutation(const size_t dimension)
 {
     std::vector<int> permutation(dimension);
-    for (size_t i = 0; i < dimension; ++i)
-    {
-        permutation[i] = i;
-    }
+    std::iota(permutation.begin(), permutation.end(), 0);
     return permutation;
 }
 
@@ -48,19 +47,6 @@ size_t get_next_budget(size_t i)
     // return i + count + to_add;
 }
 
-random_shuffle(std::vector<int> &to_shuffle)
-{
-    int rand_ind = to_shuffle.size();
-    for (int i = to_shuffle.size() - 1; i > -1; --i)
-    {
-        while (rand_ind >= to_shuffle.size())
-        {
-            rand_ind = (int)(random_generator.IOHprofiler_uniform_rand() * to_shuffle.size()); // if generates from 0 to 100 - have to deal with 100
-        }
-        std::swap(to_shuffle[i], to_shuffle[rand_ind]);
-    }
-}
-
 bool change_fitness_function(std::vector<int> &permutation,
                              std::vector<int> &target_function,
                              const size_t dimension,
@@ -68,9 +54,9 @@ bool change_fitness_function(std::vector<int> &permutation,
 {
     if (c_t == BIT_INVERT_1)
     {
-        std::vector<int> inds(dimension);
-        indices = std::iota(inds.begin(), inds.end(), 0);
-        random_shuffle(indices);
+        std::vector<int> indices(dimension);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::shuffle(indices.begin(), indices.end(), shuffle_random_generator);
         for (int i = 0; i < 1; ++i) {
             target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
@@ -78,9 +64,9 @@ bool change_fitness_function(std::vector<int> &permutation,
     }
     if (c_t == BIT_INVERT_2)
     {
-        std::vector<int> inds(dimension);
-        indices = std::iota(inds.begin(), inds.end(), 0);
-        random_shuffle(indices);
+        std::vector<int> indices(dimension);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::shuffle(indices.begin(), indices.end(), shuffle_random_generator);
         for (int i = 0; i < 2; ++i) {
             target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
@@ -88,9 +74,9 @@ bool change_fitness_function(std::vector<int> &permutation,
     }
     if (c_t == BIT_INVERT_3)
     {
-        std::vector<int> inds(dimension);
-        indices = std::iota(inds.begin(), inds.end(), 0);
-        random_shuffle(indices);
+        std::vector<int> indices(dimension);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::shuffle(indices.begin(), indices.end(), shuffle_random_generator);
         for (int i = 0; i < 3; ++i) {
             target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
@@ -98,9 +84,9 @@ bool change_fitness_function(std::vector<int> &permutation,
     }
     if (c_t == BIT_INVERT_4)
     {
-        std::vector<int> inds(dimension);
-        indices = std::iota(inds.begin(), inds.end(), 0);
-        random_shuffle(indices);
+        std::vector<int> indices(dimension);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::shuffle(indices.begin(), indices.end(), shuffle_random_generator);
         for (int i = 0; i < 4; ++i) {
             target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
@@ -108,9 +94,9 @@ bool change_fitness_function(std::vector<int> &permutation,
     }
     if (c_t == BIT_INVERT_5)
     {
-        std::vector<int> inds(dimension);
-        indices = std::iota(inds.begin(), inds.end(), 0);
-        random_shuffle(indices);
+        std::vector<int> indices(dimension);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::shuffle(indices.begin(), indices.end(), shuffle_random_generator);
         for (int i = 0; i < 5; ++i) {
             target_function[indices[i]] = (target_function[indices[i]] + 1) % 2;
         }
@@ -118,7 +104,7 @@ bool change_fitness_function(std::vector<int> &permutation,
     }
     if (c_t == PERMUTATION)
     {
-        random_shuffle(permutation);
+        std::shuffle(permutation.begin(), permutation.end(), shuffle_random_generator);
         return true;
     }
     // c_t == NO_CHANGE
