@@ -12,11 +12,11 @@ bud_multiplier=${8}
 user_algorithm_param_1=${9}
 user_algorithm_param_2=${10}
 
-if [ "$user_algorithm_param_1" -ne 0 ]; then
+if ! [ -z "$user_algorithm_param_1" ] && [ "$user_algorithm_param_1" -ne 0 ]; then
     newpath_subfolder+="_$user_algorithm_param_1"
 fi
 
-if [ "$user_algorithm_param_2" -ne 0 ]; then
+if ! [ -z "$user_algorithm_param_2" ] && [ "$user_algorithm_param_2" -ne 0 ]; then
     newpath_subfolder+="_$user_algorithm_param_2"
 fi
 

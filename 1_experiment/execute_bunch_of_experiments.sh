@@ -62,30 +62,27 @@ generate_jobs(){
     budget_multiplier=6
 
     func_id_arr=(2) # 1 4 7 9 2 11 14 16
-    ua_arr=(stat ab) # stat ab stat_rea ab_rea
+    ua_arr=(stat) # stat ab stat_rea ab_rea
     fitness_arr=(bi_1 bi_5) # stat bi pm
-    frequency_arr=(50 5)
-    gamma_arr=(1 3 5 10)
-    kappa_arr=(1 3 5)
+    frequency_arr=(5000 500 50 5)
+    gamma_arr=(1 5 10 25 50 75 100)
 
     for func_id in ${func_id_arr[@]}; do
         for ua in ${ua_arr[@]}; do
-            # for fitness in stat; do
-            #     for frequency in 0; do
-            #         jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
-            #         for gamma in ${gamma_arr[@]}; do
-            #             jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
-            #         done
-            #     done
-            # done
+            for fitness in stat; do
+                for frequency in 0; do
+                    jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
+                    for gamma in ${gamma_arr[@]}; do
+                        jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
+                    done
+                done
+            done
 
             for fitness in ${fitness_arr[@]}; do
                 for frequency in ${frequency_arr[@]}; do
-                    jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0 0" )
+                    jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} 0" )
                     for gamma in ${gamma_arr[@]}; do
-                        for kappa in ${kappa_arr[@]}; do
-                            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma} ${kappa}" )
-                        done
+                        jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma}" )
                     done
                 done
             done
