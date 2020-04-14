@@ -149,6 +149,10 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
                         best_fitness_for_solution_for_distance.push_back(-1.0);
                     }
                 }
+                else
+                {
+                    *best_value = evaluate(problem, logger, best, permutation, target_function, dimension);
+                }
             }
 
             should_change_fitness = false;

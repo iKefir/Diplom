@@ -8,7 +8,7 @@ fi
 DIR=$(dirname $0)
 p=${DIR}/../../RunResults/$1
 
-for graph_type in best_fitness mutation_rate; do
+for graph_type in best_fitness; do # mutation_rate
 
 # merged stat and ab
 s_p="all_zips/comb_graphs/"${graph_type}
