@@ -89,10 +89,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
     double *r_m_on = new double(1);
     *r_m_on = (double)rea_mode_on;
     int gamma = USER_ALGORITHM_PARAM_1;
-    int kappa = USER_ALGORITHM_PARAM_2;
-    int dynamic_change_count = 0;
-    double *d_c_c = new double(1);
-    *d_c_c = (double)dynamic_change_count;
     int h_dist;
     std::vector<int> old_best(dimension);
     double old_best_value = *best_value;
@@ -104,13 +100,11 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
     parameters.push_back(std::shared_ptr<double>(mutation_rate));
     parameters.push_back(std::shared_ptr<double>(n_b_t_c_f));
     parameters.push_back(std::shared_ptr<double>(r_m_on));
-    parameters.push_back(std::shared_ptr<double>(d_c_c));
     std::vector<std::string> parameters_name;
     parameters_name.push_back("best_value");
     parameters_name.push_back("mutation_rate");
     parameters_name.push_back("next_budget_to_change_fitness");
     parameters_name.push_back("is_rea_working");
-    parameters_name.push_back("dynamic_change_count");
     logger->set_parameters(parameters, parameters_name);
 
     parent = generatingIndividual(dimension);
@@ -135,12 +129,10 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
             if (is_fitness_changed)
             {
                 // init rea here
-                if (!rea_mode_on || (rea_mode_on && dynamic_change_count >= kappa))
+                if (!rea_mode_on)
                 {
                     rea_mode_on = true;
                     *r_m_on = (double)rea_mode_on;
-                    dynamic_change_count = 1;
-                    *d_c_c = (double)dynamic_change_count;
                     old_best = best;
                     old_best_value = *best_value;
                     *best_value = evaluate(problem, logger, best, permutation, target_function, dimension);
@@ -156,11 +148,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
                         best_solution_for_distance.push_back({-1});
                         best_fitness_for_solution_for_distance.push_back(-1.0);
                     }
-                }
-                else
-                {
-                    dynamic_change_count++;
-                    *d_c_c = (double)dynamic_change_count;
                 }
             }
 
@@ -231,8 +218,6 @@ void evolutionary_algorithm(std::shared_ptr<IOHprofiler_problem<int>> problem,
             {
                 rea_mode_on = false;
                 *r_m_on = (double)rea_mode_on;
-                dynamic_change_count = 0;
-                *d_c_c = (double)dynamic_change_count;
             }
         }
 
