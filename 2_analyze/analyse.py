@@ -15,6 +15,7 @@ import math
 from contextlib import closing
 from io import TextIOWrapper
 
+quantiles_to_save = [2, 5, 10, 25, 50, 75, 90, 95, 98]
 
 def parse_command_line():
     parser = argparse.ArgumentParser(description='Supa advanced plots maker.')
@@ -29,6 +30,8 @@ def read_csv(path):
     results = []
     mutation_rate = []
     rea_mode_on = []
+    quantiles = []
+    medians = []
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with zf.open('best_fitness.csv') as csv_file:
             reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
@@ -49,12 +52,24 @@ def read_csv(path):
                 if i == 0:
                     continue
                 rea_mode_on.append(float(row[1]))
+        with zf.open('quantiles.csv') as csv_file:
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                quantiles.append([float(q) for q in row[1:]])
+        with zf.open('median.csv') as csv_file:
+            reader = csv.reader(TextIOWrapper(csv_file, 'utf-8'), delimiter=',')
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                medians.append(float(row[1]))
 
-    return inds, results, mutation_rate, rea_mode_on
+    return inds, results, mutation_rate, rea_mode_on, quantiles, medians
 
 
-def write_csv(path, inds, results, mutation_rates, rea_mode_on):
-    delete_files_from_zip(path, ['best_fitness.csv', 'mutation_rate.csv', 'rea_mode_on.csv'])
+def write_csv(path, inds, results, mutation_rates, rea_mode_on, quantiles, medians):
+    delete_files_from_zip(path, ['best_fitness.csv', 'mutation_rate.csv', 'rea_mode_on.csv', 'quantiles.csv', 'median.csv'])
 
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         tmpdir = tempfile.mkdtemp()
@@ -62,6 +77,8 @@ def write_csv(path, inds, results, mutation_rates, rea_mode_on):
         bp_path = os.path.join(tmpdir, 'best_fitness.csv')
         mp_path = os.path.join(tmpdir, 'mutation_rate.csv')
         rmp_path = os.path.join(tmpdir, 'rea_mode_on.csv')
+        quant_path = os.path.join(tmpdir, 'quantiles.csv')
+        med_path = os.path.join(tmpdir, 'median.csv')
 
         try:
             with open(bp_path, "w") as csv_file:
@@ -84,6 +101,20 @@ def write_csv(path, inds, results, mutation_rates, rea_mode_on):
                 for row in zip(inds, rea_mode_on):
                     writer.writerow(row)
             zf.write(rmp_path, os.path.basename(rmp_path))
+
+            with open(quant_path, "w") as csv_file:
+                writer = csv.writer(csv_file, delimiter=',')
+                writer.writerow(['inds'] + ['q_' + str(q) for q in quantiles_to_save])
+                for row in [[i] + quant for (i, quant) in zip(inds, quantiles)]:
+                    writer.writerow(row)
+            zf.write(quant_path, os.path.basename(quant_path))
+
+            with open(med_path, "w") as csv_file:
+                writer = csv.writer(csv_file, delimiter=',')
+                writer.writerow(['inds', 'median'])
+                for row in zip(inds, medians):
+                    writer.writerow(row)
+            zf.write(med_path, os.path.basename(med_path))
         except IOError as e:
             print('IOError')
             print(e)
@@ -91,6 +122,8 @@ def write_csv(path, inds, results, mutation_rates, rea_mode_on):
             os.remove(bp_path)
             os.remove(mp_path)
             os.remove(rmp_path)
+            os.remove(quant_path)
+            os.remove(med_path)
         finally:
             os.rmdir(tmpdir)
 
@@ -100,6 +133,8 @@ def analyse_zip(path, filename, best_fitness):
     results = []
     mutation_rates = []
     rea_mode_on = []
+    quantiles = []
+    medians = []
     runs = 0
     with closing(zipfile.ZipFile(path, 'a')) as zf:
         with TextIOWrapper(zf.open(filename), 'utf-8') as rr:
@@ -127,8 +162,10 @@ def analyse_zip(path, filename, best_fitness):
 
                     if (len(results) > eval_num):
                         results[eval_num] += best_f
+                        quantiles[eval_num].append(best_f)
                     else:
                         results.append(best_f)
+                        quantiles.append([])
 
                     if (len(mutation_rates) > eval_num):
                         mutation_rates[eval_num] += m_rate
@@ -143,14 +180,19 @@ def analyse_zip(path, filename, best_fitness):
     new_results = []
     new_mutation_rates = []
     new_rea_mode_on = []
-    for i, (r, m_r, rea) in enumerate(zip(results, mutation_rates, rea_mode_on)):
+    indices_to_save = [int(q / 100 * runs) for q in quantiles_to_save]
+    new_quantiles = []
+    for i, (r, m_r, rea, quantile) in enumerate(zip(results, mutation_rates, rea_mode_on, quantiles)):
         if (r >= 0.0):
             inds.append(i)
             new_results.append(r / runs)
             new_mutation_rates.append(m_r / runs)
             new_rea_mode_on.append(rea / runs)
+            quantile = sorted(quantile)
+            new_quantiles.append([quantile[ind] for ind in indices_to_save])
+            medians.append(quantile[int(len(quantile) / 2)])
 
-    return inds, new_results, new_mutation_rates, new_rea_mode_on
+    return inds, new_results, new_mutation_rates, new_rea_mode_on, new_quantiles, medians
 
 
 def delete_files_from_zip(path, files_to_del):
@@ -173,13 +215,15 @@ def process_zip(path, best_fitness, analyse=False):
     results = []
     mutation_rates = []
     rea_mode_on = []
+    quantiles = []
+    medians = []
     if (len(csvs) > 0) and (analyse == False):
-        inds, results, mutation_rates, rea_mode_on = read_csv(path)
+        inds, results, mutation_rates, rea_mode_on, quantiles, medians = read_csv(path)
     else:
-        inds, results, mutation_rates, rea_mode_on = analyse_zip(path, cdats[0], best_fitness)
-        write_csv(path, inds, results, mutation_rates, rea_mode_on)
+        inds, results, mutation_rates, rea_mode_on,  quantiles, medians = analyse_zip(path, cdats[0], best_fitness)
+        write_csv(path, inds, results, mutation_rates, rea_mode_on, quantiles, medians)
 
-    return inds, results, mutation_rates, rea_mode_on
+    return inds, results, mutation_rates, rea_mode_on, quantiles, medians
 
 
 if __name__ == '__main__':

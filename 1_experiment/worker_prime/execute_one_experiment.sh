@@ -9,10 +9,15 @@ restarts=${5}
 newpath=${6}
 f_id=${7}
 bud_multiplier=${8}
-user_algorithm_param=${9}
+user_algorithm_param_1=${9}
+user_algorithm_param_2=${10}
 
-if [ "$user_algorithm_param" -ne 0 ]; then
-    newpath_subfolder+="_$user_algorithm_param"
+if [ "$user_algorithm_param_1" -ne 0 ]; then
+    newpath_subfolder+="_$user_algorithm_param_1"
+fi
+
+if [ "$user_algorithm_param_2" -ne 0 ]; then
+    newpath_subfolder+="_$user_algorithm_param_2"
 fi
 
 filename=${newpath_subfolder}
@@ -22,7 +27,7 @@ printf "FUNC_ID\t${f_id}\tEXPERIMENT ${newpath_subfolder}\tASSEMBLING\n"
 ${DIR}/assemble_config.sh ${filename} ${dimensions} ${f_id} &&
 cp ${DIR}/config/assembled.cpp ${resultpath}/configuration.ini &&
 # create user algorithm file
-${DIR}/assemble_ua.sh ${restarts} ${bud_multiplier} ${1} ${2} ${3} ${user_algorithm_param} &&
+${DIR}/assemble_ua.sh ${restarts} ${bud_multiplier} ${1} ${2} ${3} ${user_algorithm_param_1} ${user_algorithm_param_2} &&
 cp ${DIR}/user_algorithm/cpp/assembled/assembled.cpp ${resultpath}/IOHprofiler_run_experiment.cpp &&
 # delete any unfinished experiments folders
 rm -rf ${resultpath}/${filename}* &&
