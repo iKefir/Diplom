@@ -1,0 +1,39 @@
+\documentclass{article}
+
+\usepackage{algorithm2e}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{algorithm}
+\textbf{Optimization:}
+\For{$t=1,2,3,\ldots$}{
+		\uIf{dynamicChangeHappened and not reaIsWorking}
+		{
+		$reaIsWorking \gets true$\;
+		$x_{old} \gets x^{*}$\;
+		$x^{0},x^{*} \gets x_{old}$\;
+    \lFor{$i=1,2,\ldots,\gamma+1$}{$x^i \gets \text{undefined}$, $f^{i} \gets -\infty$}
+    }
+		\uIf{reaIsWorking}
+		{
+		    Select parent $x$ 
+by choosing $x^{*}$ with probability $1/2$ and uniformly at random from $\{x^i \mid i \in [0..\gamma+1]\} \setminus \{x^{*}\}$ otherwise\;
+		}
+    Create $y$ from $x$ by flipping in each bit independently with probability $1/n$; // standard bit mutation\\
+    \lIf{$f(y) \ge f(x^*)$}{\label{line:selection}$x^{*} \gets y$}
+    \uIf{reaIsWorking}
+    {
+   $i \gets \min\{H(y,x_{old}),\gamma+1\}$\;
+    \lIf{$f(y)\ge f^i$}{\label{line:update}$x^i \gets y$, $f^i \gets f(y)$}
+    \lIf{$f(x^{*}) \ge f(x_{old})$}
+    {
+    	$reaIsWorking \gets false$
+    }
+    }
+}%t=1,...
+\caption{The $(1+1)EA$ with $REA$ phase when dynmic change occurs.}
+\label{alg:algo}
+\end{algorithm}
+
+\end{document}

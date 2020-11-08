@@ -64,22 +64,22 @@ generate_jobs(){
     func_id_arr=(2) # 1 4 7 9 2 11 14 16
     ua_arr=(stat) # stat ab stat_rea ab_rea
     fitness_arr=(bi_1 bi_5) # stat bi pm
-    frequency_arr=(500 50 5)
+    frequency_arr=(5000 500 50 5) # 5000 500 50 5
     gamma_arr=(1 3 5 10) # 1 5 100
-    kappa_arr=(1000000000) # 1 3 5 1000000000
+    kappa_arr=(1 3 5 1000000000) # 1 3 5 1000000000
 
     for func_id in ${func_id_arr[@]}; do
         for ua in ${ua_arr[@]}; do
-            for fitness in stat; do
-                for frequency in 0; do
-                    jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
-                    for gamma in ${gamma_arr[@]}; do
-                        for kappa in ${kappa_arr[@]}; do
-                            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma} ${kappa}" )
-                        done
-                    done
-                done
-            done
+            # for fitness in stat; do
+            #     for frequency in 0; do
+                    # jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+            #         for gamma in ${gamma_arr[@]}; do
+            #             for kappa in ${kappa_arr[@]}; do
+            #                 jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma} ${kappa}" )
+            #             done
+            #         done
+            #     done
+            # done
 
             for fitness in ${fitness_arr[@]}; do
                 for frequency in ${frequency_arr[@]}; do
@@ -105,7 +105,7 @@ print_processing_info(){
     printf "\n"
     while true; do
         if read line <$processing_info_pipe; then
-            # printf "READ: $line\n"
+            # printf "READ: $line\n" # debug print
             if [[ "$line" == 'tinc' ]]; then
                 ((job_i++))
             else
