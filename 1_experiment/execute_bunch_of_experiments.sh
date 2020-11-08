@@ -70,16 +70,16 @@ generate_jobs(){
 
     for func_id in ${func_id_arr[@]}; do
         for ua in ${ua_arr[@]}; do
-            # for fitness in stat; do
-            #     for frequency in 0; do
-                    # jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
-            #         for gamma in ${gamma_arr[@]}; do
-            #             for kappa in ${kappa_arr[@]}; do
-            #                 jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma} ${kappa}" )
-            #             done
-            #         done
-            #     done
-            # done
+            for fitness in stat; do
+                for frequency in 0; do
+                    jobs+=( "${fitness} ${frequency} ${ua} ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier}" )
+                    for gamma in ${gamma_arr[@]}; do
+                        for kappa in ${kappa_arr[@]}; do
+                            jobs+=( "${fitness} ${frequency} ${ua}_rea ${dimension} ${restarts} ${newpath}/${func_id} ${func_id} ${budget_multiplier} ${gamma} ${kappa}" )
+                        done
+                    done
+                done
+            done
 
             for fitness in ${fitness_arr[@]}; do
                 for frequency in ${frequency_arr[@]}; do
